@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MannMitra</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app">
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <span>MannMitra</span>
+    </div>
+    <span class="tagline">a private space to talk</span>
+  </header>
+
+  <div id="crisis-banner" class="crisis-banner hidden">
+    <p><strong>It sounds like things are really hard right now.</strong> You don't have to handle this alone.</p>
+    <div id="helpline-list"></div>
+  </div>
+
+  <div id="chat-window" class="chat-window">
+    <div class="message bot">
+      Hi, I'm MannMitra. This is a private space, no one else can see what you share here.
+      What's on your mind today?
+    </div>
+  </div>
+
+  <div class="input-bar">
+    <button id="mic-btn" class="mic-btn" title="Speak instead of typing">🎤</button>
+    <input id="text-input" type="text" placeholder="Type or tap the mic to talk..." />
+    <button id="send-btn" class="send-btn">Send</button>
+  </div>
+
+  <p class="disclaimer">
+    MannMitra does not diagnose and is not a substitute for professional counselling.
+    In an emergency, please contact the LPU Division of Happiness and Wellbeing or a helpline directly.
+  </p>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
