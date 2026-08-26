@@ -2,7 +2,7 @@
 // Handles: sending messages to the backend, showing replies, voice input (STT),
 // voice output (TTS), and showing the crisis banner when the backend flags risk.
 
-const BACKEND_URL = "http://127.0.0.1:8000"; // change this once you deploy the backend
+const BACKEND_URL = "https://mannmitra-backend-hrrh.onrender.com"; // change this once you deploy the backend
 
 const chatWindow = document.getElementById("chat-window");
 const textInput = document.getElementById("text-input");
