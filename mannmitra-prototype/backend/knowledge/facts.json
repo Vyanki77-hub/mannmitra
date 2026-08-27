@@ -1,0 +1,26 @@
+[
+  {
+    "topic": "DSR office location",
+    "keywords": ["dsr", "dsr office", "student welfare office", "where is dsr"],
+    "answer": "LPU's Division of Student Relationship (DSR) is located at Block 32, Room No. 100. The enquiry phone number listed by LPU is 01824-520150.",
+    "source": "LPU official website - Mentoring & Advising / Division of Student Relationship"
+  },
+  {
+    "topic": "Division of Happiness and Wellbeing contact",
+    "keywords": ["wellbeing", "happiness", "counselling", "counseling", "mental health office", "wellbeing office contact"],
+    "answer": "LPU's Department of Counseling and Happiness is located at Building 8, Room 208. Students can book a counselling appointment through UMS or walk in directly to the department. The listed timings are Monday to Saturday from 9:00 AM to 7:00 PM and Sunday from 10:00 AM to 4:00 PM. LPU's public department page does not list a dedicated phone number or email for the department.",
+    "source": "LPU official website - Department of Counseling and Happiness"
+  },
+  {
+    "topic": "Hostel block directory example",
+    "keywords": ["hostel", "hostel block", "which block", "boys hostel", "girls hostel"],
+    "answer": "LPU's official documentation lists residential facilities including Boys Hostel-01 through Boys Hostel-13 and Girls Hostel-01 through Girls Hostel-12. However, the current publicly available LPU residential information does not provide a reliable, up-to-date mapping of each hostel to a specific campus block or physical location. Students should check their current hostel allotment/residential information in UMS or contact the Residential Services/hostel administration for the exact location.",
+    "source": "LPU official residential information and LPU institutional report"
+  },
+  {
+    "topic": "Fee payment deadline example",
+    "keywords": ["fee deadline", "fee due date", "when is fee due", "late fee"],
+    "answer": "A general current 2026-27 tuition-fee payment deadline could not be verified from LPU's publicly available academic calendar. Fee payment deadlines may depend on the student's programme, semester and fee notice. Students should check the fee section and current notifications in UMS or contact the relevant LPU accounts/fee office for the exact due date. Do not assume the Reappear Examination application deadline is the fee payment deadline.",
+    "source": "LPU official academic calendar for 2026-27; programme/UMS-specific fee information should be checked for the exact deadline"
+  }
+]
