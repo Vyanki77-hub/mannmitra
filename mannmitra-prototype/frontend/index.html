@@ -14,7 +14,7 @@
       <div class="brand-dot"></div>
       <span>MannMitra</span>
     </div>
-    <span class="tagline">a private space to talk</span>
+    <button id="orb-toggle-btn" class="orb-toggle-btn" title="Switch to voice mode">🔵 Voice</button>
   </header>
 
   <div id="crisis-banner" class="crisis-banner hidden">
@@ -39,6 +39,14 @@
     MannMitra does not diagnose and is not a substitute for professional counselling.
     In an emergency, please contact the LPU Division of Happiness and Wellbeing or a helpline directly.
   </p>
+</div>
+
+<!-- Blue Orb voice-only mode -->
+<div id="orb-overlay" class="orb-overlay hidden">
+  <button id="orb-close-btn" class="orb-close-btn" title="Back to text chat">✕</button>
+  <div id="orb-circle" class="orb-circle idle"></div>
+  <p id="orb-status" class="orb-status">Tap the orb to talk</p>
+  <p id="orb-caption" class="orb-caption"></p>
 </div>
 
 <script src="app.js"></script>

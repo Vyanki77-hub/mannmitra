@@ -1,13 +1,6 @@
 # rag.py
 # The retrieval layer. This is what turns MannMitra from "guessing based on
 # training data" into "answering only from real, verified LPU documents."
-#
-# Two retrieval paths, matching your mentor's advice:
-#   1. Structured facts (facts.json) - exact keyword lookup for hard facts like
-#      block numbers, contact info, deadlines. These should never be left to
-#      probabilistic semantic search.
-#   2. Semantic search (Chroma) - for open-ended policy/FAQ questions where the
-#      wording won't match exactly, so meaning-based search is more useful.
 
 import os
 import json
@@ -20,16 +13,41 @@ FACTS_PATH = os.path.join(KNOWLEDGE_DIR, "facts.json")
 _client = chromadb.PersistentClient(path=CHROMA_DIR)
 _collection = _client.get_or_create_collection(name="lpu_knowledge")
 
+# Words that suggest the message is actually asking for information, not just
+# chatting. Used to decide whether the (slower) semantic search is worth running.
+INFO_SIGNAL_WORDS = [
+    "where", "when", "how do i", "how can i", "what is the", "contact",
+    "office", "block", "hostel", "deadline", "fee", "counsel", "wellbeing",
+    "dsr", "location", "number", "email", "policy", "schedule", "exam date",
+]
+
+CASUAL_MESSAGES = {
+    "hi", "hii", "hiii", "hello", "hey", "heya", "yo",
+    "how are you", "good morning", "good night", "good afternoon",
+    "thanks", "thank you", "ok", "okay", "bye", "goodbye", "cool", "nice",
+}
+
 
 def _load_facts():
     with open(FACTS_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
+def _needs_semantic_search(query: str) -> bool:
+    """Skip the (comparatively slow) embedding + vector search step for
+    obvious small talk. This is the main fix for slow replies to 'hello'."""
+    q = query.strip().lower()
+    if q in CASUAL_MESSAGES:
+        return False
+    if len(q.split()) <= 2 and "?" not in q:
+        return False
+    if "?" in q:
+        return True
+    return any(word in q for word in INFO_SIGNAL_WORDS)
+
+
 def search_facts(query: str) -> list[dict]:
-    """Exact-match style lookup: does the query contain any keyword from a
-    structured fact entry? This handles the 'hard facts' category your
-    mentor flagged (block numbers, contacts, deadlines)."""
+    """Exact-match style lookup - cheap, always safe to run on every message."""
     query_lower = query.lower()
     facts = _load_facts()
     matches = []
@@ -42,7 +60,8 @@ def search_facts(query: str) -> list[dict]:
 
 
 def retrieve_chunks(query: str, k: int = 3) -> list[dict]:
-    """Semantic search over the document collection for open-ended questions."""
+    """Semantic search over the document collection. Only call this when
+    _needs_semantic_search says it's worth the extra time."""
     if _collection.count() == 0:
         return []
     results = _collection.query(query_texts=[query], n_results=min(k, _collection.count()))
@@ -53,12 +72,12 @@ def retrieve_chunks(query: str, k: int = 3) -> list[dict]:
 
 
 def get_grounded_context(query: str) -> dict:
-    """The main function main.py calls. Combines structured facts and semantic
-    chunks into one context block, and tells the caller whether anything
-    relevant was actually found (so the model can be told to say 'I don't
-    have verified info' instead of guessing when nothing matches)."""
+    """Main entry point main.py calls."""
     facts = search_facts(query)
-    chunks = retrieve_chunks(query, k=3)
+
+    chunks = []
+    if _needs_semantic_search(query):
+        chunks = retrieve_chunks(query, k=3)
 
     if not facts and not chunks:
         return {"found": False, "context_text": ""}

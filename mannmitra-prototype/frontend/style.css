@@ -46,11 +46,19 @@ body {
   background: #2E5C4E;
 }
 
-.tagline {
-  font-size: 12px;
-  color: #8A8A8A;
+.orb-toggle-btn {
   margin-left: auto;
+  background: #EEF3F0;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  color: #2E5C4E;
+  cursor: pointer;
+  font-weight: 500;
 }
+
+.orb-toggle-btn:hover { background: #DEE9E3; }
 
 .crisis-banner {
   background: #FBF1DD;
@@ -144,5 +152,95 @@ body {
   color: #9A9A9A;
   text-align: center;
   padding: 8px 16px 14px;
+  margin: 0;
+}
+
+/* ---------------- Blue Orb voice mode ---------------- */
+
+.orb-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0E2620;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  z-index: 50;
+}
+
+.orb-overlay.hidden { display: none; }
+
+.orb-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #FFFFFF;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.orb-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #5FB596, #1B3E33);
+  cursor: pointer;
+  animation: orb-idle 3s ease-in-out infinite;
+}
+
+.orb-circle.listening {
+  animation: orb-listening 1.1s ease-in-out infinite;
+  box-shadow: 0 0 50px rgba(95, 181, 150, 0.55);
+}
+
+.orb-circle.thinking {
+  animation: orb-thinking 1.4s linear infinite;
+}
+
+.orb-circle.speaking {
+  animation: orb-speaking 0.6s ease-in-out infinite;
+  box-shadow: 0 0 60px rgba(95, 181, 150, 0.7);
+}
+
+@keyframes orb-idle {
+  0%, 100% { transform: scale(1); opacity: 0.88; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+@keyframes orb-listening {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.16); }
+}
+
+@keyframes orb-thinking {
+  0% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+  50% { transform: scale(0.96) rotate(180deg); filter: brightness(1.2); }
+  100% { transform: scale(1) rotate(360deg); filter: brightness(1); }
+}
+
+@keyframes orb-speaking {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.09); }
+}
+
+.orb-status {
+  color: #EAF3EF;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.orb-caption {
+  color: #A9C7BB;
+  font-size: 12.5px;
+  max-width: 320px;
+  text-align: center;
+  min-height: 18px;
   margin: 0;
 }

@@ -1,8 +1,8 @@
 // app.js
 // Handles: sending messages to the backend, showing replies, voice input (STT),
-// voice output (TTS), and showing the crisis banner when the backend flags risk.
+// voice output (TTS), the crisis banner, and the blue orb voice-only mode.
 
-const BACKEND_URL = "https://mannmitra-backend-hrrh.onrender.com"; // change this once you deploy the backend
+const BACKEND_URL = "https://mannmitra-backend-hrrh.onrender.com"; // your live backend
 
 const chatWindow = document.getElementById("chat-window");
 const textInput = document.getElementById("text-input");
@@ -10,6 +10,14 @@ const sendBtn = document.getElementById("send-btn");
 const micBtn = document.getElementById("mic-btn");
 const crisisBanner = document.getElementById("crisis-banner");
 const helplineList = document.getElementById("helpline-list");
+
+// Orb mode elements
+const orbToggleBtn = document.getElementById("orb-toggle-btn");
+const orbOverlay = document.getElementById("orb-overlay");
+const orbCloseBtn = document.getElementById("orb-close-btn");
+const orbCircle = document.getElementById("orb-circle");
+const orbStatus = document.getElementById("orb-status");
+const orbCaption = document.getElementById("orb-caption");
 
 let history = [];
 
@@ -31,66 +39,48 @@ function showCrisisBanner(helplines) {
 
 function cleanTextForSpeech(text) {
   return text
-    // Remove emojis and most symbols
     .replace(/[\p{Extended_Pictographic}\p{Emoji_Presentation}]/gu, "")
-
-    // Remove markdown formatting
     .replace(/[*_#`~]/g, "")
-
-    // Remove decorative arrows and symbols
     .replace(/[→←↑↓⇒⇐✓✔•▪◦]/g, "")
-
-    // Remove URLs
     .replace(/https?:\/\/\S+/gi, "")
-
-    // Remove excessive punctuation
     .replace(/([!?.,])\1+/g, "$1")
-
-    // Replace multiple spaces/newlines
     .replace(/\s+/g, " ")
-
     .trim();
 }
 
-
-function speak(text) {
+function speak(text, onEnd) {
   if (!("speechSynthesis" in window)) {
-    console.error("Text-to-Speech is not supported in this browser.");
+    if (onEnd) onEnd();
     return;
   }
-
   const cleanText = cleanTextForSpeech(text);
-
   if (!cleanText) {
+    if (onEnd) onEnd();
     return;
   }
 
-  // Stop previous speech
   window.speechSynthesis.cancel();
-
   const utterance = new SpeechSynthesisUtterance(cleanText);
-
   utterance.lang = "en-IN";
   utterance.rate = 0.95;
   utterance.pitch = 1;
   utterance.volume = 1;
 
-  utterance.onstart = () => {
-    console.log("MannMitra started speaking");
-  };
-
-  utterance.onend = () => {
-    console.log("MannMitra finished speaking");
-  };
-
-  utterance.onerror = (event) => {
-    console.error("Speech synthesis error:", event);
-  };
+  utterance.onend = () => { if (onEnd) onEnd(); };
+  utterance.onerror = () => { if (onEnd) onEnd(); };
 
   window.speechSynthesis.speak(utterance);
 }
 
-async function sendMessage(message) {
+/**
+ * Sends a message to the backend.
+ * @param {string} message - what the user said/typed
+ * @param {boolean} speakReply - whether the reply should be read aloud
+ *   (true for voice input, false for typed text)
+ * @param {function} onReply - optional callback(data) once the reply arrives,
+ *   used by orb mode to drive the orb's visual state
+ */
+async function sendMessage(message, speakReply, onReply) {
   if (!message.trim()) return;
 
   addMessage(message, "user");
@@ -108,7 +98,6 @@ async function sendMessage(message) {
     const data = await res.json();
 
     addMessage(data.reply, "bot");
-    speak(data.reply);
 
     if (data.risk_level === "high") {
       showCrisisBanner(data.helplines);
@@ -116,26 +105,34 @@ async function sendMessage(message) {
 
     history.push({ role: "user", content: message });
     history.push({ role: "assistant", content: data.reply });
+    if (history.length > 10) history = history.slice(-10);
 
-// Keep only the most recent 10 messages
-    if (history.length > 10) {
-      history = history.slice(-10);
+    if (speakReply) {
+      speak(data.reply, () => { if (onReply) onReply(data); });
+    } else {
+      if (onReply) onReply(data);
     }
   } catch (err) {
-    addMessage("I'm having trouble connecting right now. Please make sure the backend server is running.", "bot");
+    const errMsg = "I'm having trouble connecting right now. Please make sure the backend server is running.";
+    addMessage(errMsg, "bot");
     console.error(err);
+    if (speakReply) speak(errMsg, () => { if (onReply) onReply(null); });
+    else if (onReply) onReply(null);
   }
 }
 
-sendBtn.addEventListener("click", () => sendMessage(textInput.value));
+// ---------- Text chat (typed messages never get spoken aloud) ----------
+sendBtn.addEventListener("click", () => sendMessage(textInput.value, false));
 textInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendMessage(textInput.value);
+  if (e.key === "Enter") sendMessage(textInput.value, false);
 });
 
-// Voice input using the browser's built-in Web Speech API (Chrome works best)
+// ---------- Mic button inside the normal chat (voice input, spoken reply) ----------
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+
 if (SpeechRecognition) {
-  const recognition = new SpeechRecognition();
+  recognition = new SpeechRecognition();
   recognition.lang = "en-IN";
   recognition.interimResults = false;
 
@@ -146,12 +143,76 @@ if (SpeechRecognition) {
 
   recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
-    sendMessage(transcript);
+    sendMessage(transcript, true);
   };
-
   recognition.onend = () => micBtn.classList.remove("listening");
   recognition.onerror = () => micBtn.classList.remove("listening");
 } else {
   micBtn.disabled = true;
   micBtn.title = "Voice input not supported in this browser - try Chrome";
 }
+
+// ---------- Blue Orb voice-only mode ----------
+function setOrbState(state, statusText) {
+  orbCircle.className = "orb-circle " + state;
+  orbStatus.textContent = statusText;
+}
+
+function openOrbMode() {
+  orbOverlay.classList.remove("hidden");
+  setOrbState("idle", "Tap the orb to talk");
+  orbCaption.textContent = "";
+}
+
+function closeOrbMode() {
+  orbOverlay.classList.add("hidden");
+  if (recognition) recognition.abort();
+  window.speechSynthesis.cancel();
+}
+
+function orbListen() {
+  if (!recognition) {
+    setOrbState("idle", "Voice not supported in this browser");
+    return;
+  }
+  setOrbState("listening", "Listening...");
+
+  const orbRecognition = new SpeechRecognition();
+  orbRecognition.lang = "en-IN";
+  orbRecognition.interimResults = false;
+
+  orbRecognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    orbCaption.textContent = `You: "${transcript}"`;
+    setOrbState("thinking", "Thinking...");
+
+    sendMessage(transcript, false, (data) => {
+      if (!data) {
+        setOrbState("idle", "Tap the orb to talk");
+        return;
+      }
+      orbCaption.textContent = data.reply;
+      setOrbState("speaking", "Speaking...");
+      speak(data.reply, () => {
+        setOrbState("idle", "Tap the orb to talk");
+      });
+    });
+  };
+
+  orbRecognition.onerror = () => setOrbState("idle", "Tap the orb to talk");
+  orbRecognition.onend = () => {
+    if (orbCircle.classList.contains("listening")) {
+      setOrbState("idle", "Tap the orb to talk");
+    }
+  };
+
+  orbRecognition.start();
+}
+
+if (orbToggleBtn) orbToggleBtn.addEventListener("click", openOrbMode);
+if (orbCloseBtn) orbCloseBtn.addEventListener("click", closeOrbMode);
+if (orbCircle) orbCircle.addEventListener("click", () => {
+  if (orbCircle.className.trim() === "orb-circle" || orbCircle.classList.contains("idle")) {
+    orbListen();
+  }
+});
