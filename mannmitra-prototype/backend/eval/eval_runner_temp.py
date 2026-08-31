@@ -16,7 +16,7 @@ if sys.stdout.encoding.lower() != 'utf-8':
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-BACKEND_URL = "http://127.0.0.1:8000/chat"
+BACKEND_URL = "http://127.0.0.1:8001/chat"
 
 with open("eval_questions.json", encoding='utf-8') as f:
     questions = json.load(f)

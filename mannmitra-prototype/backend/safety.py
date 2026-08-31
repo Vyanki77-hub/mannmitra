@@ -8,7 +8,8 @@
 HIGH_RISK_PHRASES = [
     "kill myself", "end my life", "suicide", "want to die", "ending it",
     "no reason to live", "better off dead", "hurt myself", "self harm",
-    "self-harm", "can't go on", "cant go on",
+    "self-harm", "can't go on", "cant go on", "don't want to live",
+    "tired of living",
 ]
 
 MODERATE_RISK_PHRASES = [
