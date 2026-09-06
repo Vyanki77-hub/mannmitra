@@ -50,9 +50,21 @@ function showView(viewName) {
   if (viewName === "dashboard") {
     if (dashboardScreen) dashboardScreen.classList.remove("hidden");
     if (appContainer) appContainer.classList.add("hidden");
+    const resourcesView = document.getElementById("resources-view");
+    if (resourcesView) resourcesView.classList.add("hidden");
   } else if (viewName === "chat") {
     if (dashboardScreen) dashboardScreen.classList.add("hidden");
     if (appContainer) appContainer.classList.remove("hidden");
+    const resourcesView = document.getElementById("resources-view");
+    if (resourcesView) resourcesView.classList.add("hidden");
+  } else if (viewName === "resources") {
+    if (dashboardScreen) dashboardScreen.classList.add("hidden");
+    if (appContainer) appContainer.classList.add("hidden");
+    const resourcesView = document.getElementById("resources-view");
+    if (resourcesView) {
+      resourcesView.classList.remove("hidden");
+      loadResources();
+    }
   }
 }
 
@@ -283,17 +295,109 @@ if (SpeechRecognition) {
   micBtn.title = "Voice input not supported in this browser - try Chrome";
 }
 
-// ============ Voice Orb Mode ============
+// ============ Voice Orb Mode — Brand polish + audio-reactive ============
+let orbAudioContext = null;
+let orbAnalyser = null;
+let orbMicStream = null;
+let orbVolumeRaf = null;
+let orbFakePulseTimer = null;
+
+function getOrbCenterContainer() {
+  return document.getElementById("orb-center-container");
+}
+
 function setOrbState(state, statusText) {
-  orbCircle.className = "orb-circle " + state;
+  orbCircle.classList.remove("idle", "listening", "thinking", "speaking");
+  if (state) orbCircle.classList.add(state);
+  // keep base class
+  if (!orbCircle.classList.contains("orb-circle")) orbCircle.classList.add("orb-circle");
   orbStatus.textContent = statusText;
 
-  // Manage waveform animation for listening and speaking states
+  const center = getOrbCenterContainer();
+  const isSonar = state === "listening" || state === "speaking";
+  if (center) {
+    center.classList.toggle("sonar", isSonar);
+    center.classList.toggle("ambient-listening", state === "listening");
+    center.classList.toggle("ambient-speaking", state === "speaking");
+  }
+
   if (state === "listening" || state === "speaking") {
     orbWaveform.classList.add("active");
   } else {
     orbWaveform.classList.remove("active");
   }
+
+  if (state !== "listening") stopOrbAudioReactive();
+}
+
+async function startOrbAudioReactive() {
+  // Try real mic volume via Web Audio API; fall back to rhythmic random pulse
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("no getUserMedia");
+    // Reuse existing stream if still live
+    if (orbMicStream && orbMicStream.getTracks().some(t => t.readyState === "live")) {
+      startOrbAnalyserLoop();
+      return;
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    orbMicStream = stream;
+    const AC = window.AudioContext || /** @type {any} */ (window).webkitAudioContext;
+    if (!AC) throw new Error("no AudioContext");
+    orbAudioContext = new AC();
+    const src = orbAudioContext.createMediaStreamSource(stream);
+    orbAnalyser = orbAudioContext.createAnalyser();
+    orbAnalyser.fftSize = 256;
+    src.connect(orbAnalyser);
+    startOrbAnalyserLoop();
+  } catch (_) {
+    startOrbFakePulse();
+  }
+}
+
+function startOrbAnalyserLoop() {
+  stopOrbFakePulse();
+  if (!orbAnalyser) { startOrbFakePulse(); return; }
+  const data = new Uint8Array(orbAnalyser.frequencyBinCount);
+  let baseScale = 1.06;
+  function tick() {
+    if (!orbCircle.classList.contains("listening")) return;
+    orbAnalyser.getByteFrequencyData(data);
+    // Average low-mid energy as volume proxy
+    let sum = 0;
+    for (let i = 0; i < data.length; i++) sum += data[i];
+    const avg = sum / data.length; // 0-255
+    const norm = Math.min(1, avg / 90); // clamp
+    // Map norm 0..1 -> scale 1.04 .. 1.18, with smoothing
+    const target = 1.04 + norm * 0.14;
+    baseScale = baseScale * 0.78 + target * 0.22;
+    orbCircle.style.transform = `scale(${baseScale.toFixed(3)})`;
+    orbVolumeRaf = requestAnimationFrame(tick);
+  }
+  orbVolumeRaf = requestAnimationFrame(tick);
+}
+
+function startOrbFakePulse() {
+  stopOrbFakePulse();
+  let phase = 0;
+  function tick() {
+    if (!orbCircle.classList.contains("listening")) return;
+    phase += 0.18 + Math.random() * 0.12;
+    const scale = 1.06 + Math.sin(phase) * 0.045 + Math.random() * 0.02;
+    orbCircle.style.transform = `scale(${scale.toFixed(3)})`;
+    orbFakePulseTimer = setTimeout(() => requestAnimationFrame(tick), 90 + Math.random() * 80);
+  }
+  tick();
+}
+
+function stopOrbFakePulse() {
+  if (orbFakePulseTimer) { clearTimeout(orbFakePulseTimer); orbFakePulseTimer = null; }
+}
+
+function stopOrbAudioReactive() {
+  if (orbVolumeRaf) { cancelAnimationFrame(orbVolumeRaf); orbVolumeRaf = null; }
+  stopOrbFakePulse();
+  orbCircle.style.transform = "";
+  // Keep stream alive briefly for quick re-entry; full cleanup on overlay close
 }
 
 function openOrbMode() {
@@ -304,16 +408,33 @@ function openOrbMode() {
 
 function closeOrbMode() {
   orbOverlay.classList.add("hidden");
-  if (recognition) recognition.abort();
+  stopOrbAudioReactive();
+  // Full mic stream cleanup on close so permission prompt re-appears correctly next open
+  if (orbMicStream) {
+    orbMicStream.getTracks().forEach(t => t.stop());
+    orbMicStream = null;
+  }
+  if (orbAudioContext && orbAudioContext.state !== "closed") {
+    try { orbAudioContext.close(); } catch (_) {}
+    orbAudioContext = null;
+    orbAnalyser = null;
+  }
+  const center = getOrbCenterContainer();
+  if (center) {
+    center.classList.remove("sonar", "ambient-listening", "ambient-speaking");
+  }
+  if (recognition) try { recognition.abort(); } catch (_) {}
   window.speechSynthesis.cancel();
 }
 
 function orbListen() {
-  if (!recognition) {
+  if (!SpeechRecognition) {
     setOrbState("idle", "Voice not supported in this browser");
     return;
   }
   setOrbState("listening", "I'm listening...");
+  // Start audio-reactive scaling (real AnalyserNode or fallback pulse) — never blocks SpeechRecognition
+  startOrbAudioReactive().catch(() => {});
 
   const orbRecognition = new SpeechRecognition();
   orbRecognition.lang = "en-IN";
@@ -324,7 +445,6 @@ function orbListen() {
     orbCaption.textContent = `You: "${transcript}"`;
     setOrbState("thinking", "Thinking...");
 
-    // Voice Orb: send without TTS, we'll handle TTS in the callback
     sendMessage(transcript, false, (data) => {
       if (!data) {
         setOrbState("idle", "Tap to talk");
@@ -332,7 +452,6 @@ function orbListen() {
       }
       orbCaption.textContent = data.reply;
       setOrbState("speaking", "Speaking...");
-      // Voice Orb TTS - speak the response
       speak(data.reply, () => {
         setOrbState("idle", "Tap to talk");
       });
@@ -346,7 +465,7 @@ function orbListen() {
     }
   };
 
-  orbRecognition.start();
+  try { orbRecognition.start(); } catch (_) { setOrbState("idle", "Tap to talk"); }
 }
 
 // ============ Orb Event Handlers ============
@@ -394,3 +513,163 @@ moodBtns.forEach((btn) => {
     }
   });
 });
+
+// ============ Guided Breathing Exercise ============
+const breathingOverlay = document.getElementById("breathing-overlay");
+const breathingCloseBtn = document.getElementById("breathing-close-btn");
+const breathingCircle = document.getElementById("breathing-circle");
+const breathingStatus = document.getElementById("breathing-status");
+const actionBreathingBtn = document.getElementById("action-breathing-btn");
+
+let breathingCycle = null;
+let breathingRingTimer = null;
+const BREATHING_CIRCUMFERENCE = 2 * Math.PI * 108; // must match r=108 in SVG (~678.58)
+
+function setBreathingRing(phase, progress) {
+  const ring = document.getElementById("breathing-progress-ring");
+  if (!ring) return;
+  // Ensure dasharray matches circumference (guard against CSS override)
+  ring.style.strokeDasharray = String(BREATHING_CIRCUMFERENCE);
+  let offset;
+  if (phase === "in") {
+    // fills 0 -> 100%
+    offset = BREATHING_CIRCUMFERENCE * (1 - progress);
+  } else if (phase === "hold-in") {
+    offset = 0; // full
+  } else if (phase === "out") {
+    // empties 100% -> 0%
+    offset = BREATHING_CIRCUMFERENCE * progress;
+  } else {
+    // hold-out: empty
+    offset = BREATHING_CIRCUMFERENCE;
+  }
+  ring.style.strokeDashoffset = String(offset);
+}
+
+function startBreathingCycle() {
+  if (breathingCycle !== null) return;
+
+  const phases = [
+    { status: "Breathe in...", animation: "in", duration: 4000 },
+    { status: "Hold...", animation: "hold-in", duration: 4000 },
+    { status: "Breathe out...", animation: "out", duration: 4000 },
+    { status: "Hold...", animation: "hold-out", duration: 4000 }
+  ];
+
+  let phaseIndex = 0;
+  let phaseStart = 0;
+
+  function tickRing() {
+    const phase = phases[phaseIndex % phases.length];
+    const elapsed = Date.now() - phaseStart;
+    const progress = Math.min(1, elapsed / phase.duration);
+    setBreathingRing(phase.animation, progress);
+    if (breathingCycle !== null) {
+      breathingRingTimer = requestAnimationFrame(tickRing);
+    }
+  }
+
+  function runPhase() {
+    const phase = phases[phaseIndex % phases.length];
+    breathingStatus.textContent = phase.status;
+    breathingCircle.classList.remove("in", "hold-in", "out", "hold-out");
+    // force reflow so re-adding same class restarts animation reliably across cycles
+    void breathingCircle.offsetWidth;
+    breathingCircle.classList.add(phase.animation);
+    phaseStart = Date.now();
+    // kick ring loop for this phase
+    if (breathingRingTimer) cancelAnimationFrame(breathingRingTimer);
+    tickRing();
+    phaseIndex++;
+    breathingCycle = setTimeout(runPhase, phase.duration);
+  }
+
+  runPhase();
+}
+
+function stopBreathingCycle() {
+  if (breathingCycle !== null) {
+    clearTimeout(breathingCycle);
+    breathingCycle = null;
+  }
+  if (breathingRingTimer) { cancelAnimationFrame(breathingRingTimer); breathingRingTimer = null; }
+  breathingCircle.classList.remove("in", "hold-in", "out", "hold-out");
+  setBreathingRing("hold-out", 1);
+}
+
+if (actionBreathingBtn) {
+  actionBreathingBtn.addEventListener("click", () => {
+    breathingOverlay.classList.remove("hidden");
+    startBreathingCycle();
+  });
+}
+
+if (breathingCloseBtn) {
+  breathingCloseBtn.addEventListener("click", () => {
+    stopBreathingCycle();
+    breathingOverlay.classList.add("hidden");
+  });
+}
+
+// ============ Resources Page ============
+async function loadResources() {
+  const resourcesList = document.getElementById("resources-list");
+  if (!resourcesList) return;
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/resources`);
+    if (!res.ok) throw new Error("Failed to fetch resources");
+
+    const resources = await res.json();
+
+    // Filter out resources with PLACEHOLDER in the answer
+    const validResources = resources.filter(r => !r.answer.includes("PLACEHOLDER"));
+
+    if (validResources.length === 0) {
+      resourcesList.innerHTML = '<p style="color: #B0B0C4; text-align: center;">No verified resources available yet.</p>';
+      return;
+    }
+
+    resourcesList.innerHTML = validResources
+      .map(r => `
+        <div class="resource-card">
+          <p class="resource-topic">${r.topic}</p>
+          <p class="resource-answer">${r.answer}</p>
+        </div>
+      `)
+      .join("");
+  } catch (err) {
+    console.error("Error loading resources:", err);
+    resourcesList.innerHTML = '<p style="color: #B0B0C4; text-align: center;">Error loading resources. Please try again.</p>';
+  }
+}
+
+// Resources navigation
+const navResourcesBtns = document.querySelectorAll('[id*="nav-resources-btn"]');
+const navDashResourcesBtn = document.getElementById("nav-dash-btn-resources");
+const navChatResourcesBtn = document.getElementById("nav-chat-btn-resources");
+
+navResourcesBtns.forEach(btn => {
+  if (btn && btn.id !== "nav-resources-btn" && btn.id !== "nav-resources-btn-chat") {
+    btn.addEventListener("click", () => showView("resources"));
+  }
+});
+
+// Dashboard Resources button
+if (document.getElementById("nav-resources-btn")) {
+  document.getElementById("nav-resources-btn").addEventListener("click", () => showView("resources"));
+}
+
+// Chat view Resources button
+if (document.getElementById("nav-resources-btn-chat")) {
+  document.getElementById("nav-resources-btn-chat").addEventListener("click", () => showView("resources"));
+}
+
+// Resources view navigation
+if (navDashResourcesBtn) {
+  navDashResourcesBtn.addEventListener("click", () => showView("dashboard"));
+}
+
+if (navChatResourcesBtn) {
+  navChatResourcesBtn.addEventListener("click", () => showView("chat"));
+}

@@ -15,16 +15,19 @@ _collection = _client.get_or_create_collection(name="lpu_knowledge")
 
 # Words that suggest the message is actually asking for information, not just
 # chatting. Used to decide whether the (slower) semantic search is worth running.
+# Only explicit institutional / informational signals should trigger RAG.
 INFO_SIGNAL_WORDS = [
     "where", "when", "how do i", "how can i", "what is the", "contact",
     "office", "block", "hostel", "deadline", "fee", "counsel", "wellbeing",
     "dsr", "location", "number", "email", "policy", "schedule", "exam date",
+    "support", "talk to", "who to talk",
 ]
 
 CASUAL_MESSAGES = {
     "hi", "hii", "hiii", "hello", "hey", "heya", "yo",
     "how are you", "good morning", "good night", "good afternoon",
     "thanks", "thank you", "ok", "okay", "bye", "goodbye", "cool", "nice",
+    "i'm bored", "im bored", "tell me something interesting",
 }
 
 
@@ -34,21 +37,36 @@ def _load_facts():
 
 
 def _needs_semantic_search(query: str) -> bool:
-    """Skip the (comparatively slow) embedding + vector search step for
-    obvious small talk. This is the main fix for slow replies to 'hello'."""
+    """Decide whether semantic (vector) search is worthwhile.
+
+    RAG should only fire for explicit informational / institutional questions.
+    A bare '?' without an INFO_SIGNAL_WORD must NOT trigger RAG - otherwise
+    normal emotional messages like "Why am I so sad?" pull in counselling
+    chunks unnecessarily.
+    """
     q = query.strip().lower()
     if q in CASUAL_MESSAGES:
         return False
     if len(q.split()) <= 2 and "?" not in q:
         return False
+    has_info_signal = any(word in q for word in INFO_SIGNAL_WORDS)
     if "?" in q:
-        return True
-    return any(word in q for word in INFO_SIGNAL_WORDS)
+        return has_info_signal
+    return has_info_signal
 
 
 def search_facts(query: str) -> list[dict]:
-    """Exact-match style lookup - cheap, always safe to run on every message."""
+    """Exact-match style lookup - only returns facts when the query looks like
+    an explicit informational request (contains an INFO_SIGNAL_WORD). This
+    prevents normal emotional statements like 'I feel low' from accidentally
+    pulling in DSR / counselling contact records via a stray keyword."""
     query_lower = query.lower()
+    # Normal emotional / casual messages should not trigger structured facts.
+    has_info_signal = any(word in query_lower for word in INFO_SIGNAL_WORDS)
+    # Also treat an explicit '?' combined with a fact keyword as informational,
+    # but a bare emotional '?' (e.g. "Why am I so sad?") must NOT trigger facts.
+    if not has_info_signal:
+        return []
     facts = _load_facts()
     matches = []
     for fact in facts:
