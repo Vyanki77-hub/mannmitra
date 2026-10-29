@@ -4,6 +4,7 @@
 
 import os
 import json
+import re
 import chromadb
 
 KNOWLEDGE_DIR = os.path.join(os.path.dirname(__file__), "knowledge")
@@ -13,15 +14,51 @@ FACTS_PATH = os.path.join(KNOWLEDGE_DIR, "facts.json")
 _client = chromadb.PersistentClient(path=CHROMA_DIR)
 _collection = _client.get_or_create_collection(name="lpu_knowledge")
 
-# Words that suggest the message is actually asking for information, not just
-# chatting. Used to decide whether the (slower) semantic search is worth running.
-# Only explicit institutional / informational signals should trigger RAG.
+# Words and phrases that suggest the message is actually asking for information,
+# not just chatting. Retained for backwards compatibility with external imports.
 INFO_SIGNAL_WORDS = [
-    "where", "when", "how do i", "how can i", "what is the", "contact",
+    "where", "when", "how do i", "how can i", "what is the", "what are the", "contact",
     "office", "block", "hostel", "deadline", "fee", "counsel", "wellbeing",
     "dsr", "location", "number", "email", "policy", "schedule", "exam date",
     "support", "talk to", "who to talk",
 ]
+
+# Regex patterns with strict word boundaries to avoid false substring matches
+# (e.g. 'fee' colliding with 'feeling', 'counsel' colliding with arbitrary words).
+INFO_SIGNAL_PATTERNS = [
+    r"\bwhere\b",
+    r"\bwhen\b",
+    r"\bhow\s+do\s+i\b",
+    r"\bhow\s+can\s+i\b",
+    r"\bwhat\s+is\s+the\b",
+    r"\bwhat\s+are\s+the\b",
+    r"\bcontact\w*\b",
+    r"\boffices?\b",
+    r"\bblocks?\b",
+    r"\bhostels?\b",
+    r"\bdeadlines?\b",
+    r"\bfees?\b",
+    r"\bcounsel\w*\b",
+    r"\bwell-?being\b",
+    r"\bdsr\b",
+    r"\blocations?\b",
+    r"\bnumbers?\b",
+    r"\bemails?\b",
+    r"\bpolic(y|ies)\b",
+    r"\bschedules?\b",
+    r"\bexam\s+dates?\b",
+    r"\bsupport\b",
+    r"\btalk\s+to\b",
+    r"\bwho\s+to\s+talk\b",
+]
+_COMPILED_INFO_SIGNALS = [re.compile(pat, re.IGNORECASE) for pat in INFO_SIGNAL_PATTERNS]
+
+
+def has_info_signal(text: str) -> bool:
+    """Check if text contains any explicit institutional/informational signal
+    using strict token/word boundaries, preventing substrings like 'fee' matching 'feeling'."""
+    return any(p.search(text) for p in _COMPILED_INFO_SIGNALS)
+
 
 CASUAL_MESSAGES = {
     "hi", "hii", "hiii", "hello", "hey", "heya", "yo",
@@ -40,7 +77,7 @@ def _needs_semantic_search(query: str) -> bool:
     """Decide whether semantic (vector) search is worthwhile.
 
     RAG should only fire for explicit informational / institutional questions.
-    A bare '?' without an INFO_SIGNAL_WORD must NOT trigger RAG - otherwise
+    A bare '?' without an info signal word must NOT trigger RAG - otherwise
     normal emotional messages like "Why am I so sad?" pull in counselling
     chunks unnecessarily.
     """
@@ -49,23 +86,17 @@ def _needs_semantic_search(query: str) -> bool:
         return False
     if len(q.split()) <= 2 and "?" not in q:
         return False
-    has_info_signal = any(word in q for word in INFO_SIGNAL_WORDS)
-    if "?" in q:
-        return has_info_signal
-    return has_info_signal
+    return has_info_signal(q)
 
 
 def search_facts(query: str) -> list[dict]:
     """Exact-match style lookup - only returns facts when the query looks like
-    an explicit informational request (contains an INFO_SIGNAL_WORD). This
-    prevents normal emotional statements like 'I feel low' from accidentally
+    an explicit informational request (contains an info signal with word boundaries).
+    This prevents normal emotional statements like 'I feel low' from accidentally
     pulling in DSR / counselling contact records via a stray keyword."""
     query_lower = query.lower()
     # Normal emotional / casual messages should not trigger structured facts.
-    has_info_signal = any(word in query_lower for word in INFO_SIGNAL_WORDS)
-    # Also treat an explicit '?' combined with a fact keyword as informational,
-    # but a bare emotional '?' (e.g. "Why am I so sad?") must NOT trigger facts.
-    if not has_info_signal:
+    if not has_info_signal(query_lower):
         return []
     facts = _load_facts()
     matches = []

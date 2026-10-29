@@ -1,460 +1,1535 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MannMitra — Your Mental Wellbeing Companion</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MannMitra — Your Mental Wellbeing Companion</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
 
-<!-- Step 2: Welcome / Splash Screen -->
-<div id="welcome-screen" class="welcome-screen">
-  <div class="welcome-card">
-    <div class="welcome-logo-container">
-      <img src="assets/mannmitra-main-logo.png" alt="MannMitra" class="welcome-logo-img" />
+<body data-theme="light">
+
+  <!-- ==================== VIEW 1: LOGIN / WELCOME SCREEN ==================== -->
+  <div id="login-view" class="login-view">
+    <div class="login-backdrop-glow"></div>
+    <div id="welcome-screen" class="login-card">
+      <div class="login-brand-header">
+        <div class="login-logo-container">
+          <img src="assets/mannmitra-main-logo.png" alt="MannMitra" class="login-logo-img" />
+        </div>
+        <h1 class="login-title">MannMitra</h1>
+        <p class="login-tagline">You matter. We care.</p>
+        <p class="login-subtitle">A supportive space to talk, reflect, and heal. Always here for you.</p>
+      </div>
+
+      <form id="login-form" class="login-form" onsubmit="event.preventDefault();">
+        <div class="form-group">
+          <label for="login-email">Student ID / Email</label>
+          <div class="input-with-icon">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <input type="text" id="login-email" placeholder="Enter your email or student ID" autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label for="login-password">Password</label>
+            <a href="#" id="forgot-password-link" class="forgot-link">Forgot?</a>
+          </div>
+          <div class="input-with-icon">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" />
+            <button type="button" id="toggle-password-btn" class="password-toggle-btn" title="Toggle password visibility">
+              <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="remember-label">
+            <input type="checkbox" id="remember-me" />
+            <span>Remember me</span>
+          </label>
+          <span class="safe-badge">🌱 A supportive space to reflect</span>
+        </div>
+
+        <div class="login-actions">
+          <button type="button" id="start-chat-btn" class="btn-primary-gradient login-submit-btn">
+            <span>Sign In to Sanctuary</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+          
+          <button type="button" id="guest-enter-btn" class="btn-ghost-secondary guest-btn">
+            <span>Continue as Guest</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="login-footer">
+        <button id="welcome-help-btn" class="welcome-help-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Need Immediate Emergency Support?
+        </button>
+      </div>
     </div>
-    <h1 class="welcome-title">MannMitra</h1>
-    <p class="welcome-tagline">You matter. We care.</p>
-    <p class="welcome-subtitle">A safe, confidential space to talk, heal, and grow. Always here for you.</p>
+  </div>
 
-    <div class="welcome-actions">
-      <button id="start-chat-btn" class="start-chat-btn">
-        Start Chatting
+  <!-- ==================== VIEW 2: GREETING OVERLAY ==================== -->
+  <div id="greeting-overlay" class="greeting-overlay hidden">
+    <div class="greeting-overlay-backdrop"></div>
+    <div class="greeting-card-modal">
+      <div class="greeting-orb-visual">
+        <div class="greeting-ambient-ring ring-a"></div>
+        <div class="greeting-ambient-ring ring-b"></div>
+        <div class="greeting-orb-core">
+          <img src="assets/mannmitra-icon.png" alt="MannMitra" class="greeting-orb-icon" />
+        </div>
+      </div>
+
+      <div class="greeting-text-content">
+        <div class="greeting-badge">
+          <span class="pulse-dot"></span>
+          <span>Warm Welcome</span>
+        </div>
+        <h2 id="greeting-heading" class="greeting-modal-title">Hello Vyankatesh, how are you feeling today?</h2>
+        <p id="greeting-subtitle" class="greeting-modal-subtitle">Take a moment for yourself. I'm here to listen.</p>
+
+        <div class="greeting-modal-actions">
+          <button id="greeting-continue-btn" class="btn-primary-gradient greeting-continue-btn">
+            <span>Enter My Sanctuary</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <button id="greeting-skip-btn" class="greeting-skip-link">Skip to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VIEW 3: DESKTOP WELLNESS DASHBOARD ==================== -->
+  <div id="desktop-dashboard" class="desktop-dashboard hidden">
+    
+    <!-- LEFT SIDEBAR (~260px) -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-avatar-box">
+          <img src="assets/mannmitra-icon.png" alt="MannMitra Logo" class="sidebar-brand-img" />
+        </div>
+        <div class="brand-title-box">
+          <span class="brand-title-text">MannMitra</span>
+          <span class="brand-sub-badge">AI Wellbeing Friend</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- 1. Chat with MM -->
+        <button id="nav-chat-btn" class="sidebar-nav-item active" data-view="chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Chat with MM</span>
+        </button>
+
+        <!-- 2. My Wellbeing -->
+        <button id="nav-wellbeing-btn" class="sidebar-nav-item" data-view="wellbeing">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span>My Wellbeing</span>
+        </button>
+
+        <!-- 3. Mood Tracker -->
+        <button id="nav-mood-btn" class="sidebar-nav-item" data-view="mood-tracker">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+            <line x1="9" y1="9" x2="9.01" y2="9"></line>
+            <line x1="15" y1="9" x2="15.01" y2="9"></line>
+          </svg>
+          <span>Mood Tracker</span>
+        </button>
+
+        <!-- 4. Relax & Breathe -->
+        <button id="nav-breathing-btn" class="sidebar-nav-item" data-view="relax-breathe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 12h8"></path>
+            <path d="M12 8v8"></path>
+          </svg>
+          <span>Relax & Breathe</span>
+          <span class="nav-pill-badge">Calm</span>
+        </button>
+
+        <!-- 5. Guided Support -->
+        <button id="nav-support-btn" class="sidebar-nav-item" data-view="guided-support">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span>Guided Support</span>
+        </button>
+
+        <!-- 6. College Help (LPU) -->
+        <button id="nav-lpu-btn" class="sidebar-nav-item" data-view="college-help">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+          </svg>
+          <span>College Help (LPU)</span>
+        </button>
+
+        <!-- 7. Resources Library -->
+        <button id="nav-resources-btn" class="sidebar-nav-item" data-view="resources-library">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span>Resources</span>
+        </button>
+
+        <!-- 8. My Journey -->
+        <button id="nav-journey-btn" class="sidebar-nav-item" data-view="my-journey">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+          </svg>
+          <span>My Journey</span>
+        </button>
+
+        <!-- 9. Settings -->
+        <button id="nav-settings-btn" class="sidebar-nav-item" data-view="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar User Profile Footer -->
+      <div class="sidebar-user-footer">
+        <div class="sidebar-user-avatar">
+          <span id="sidebar-user-initial">V</span>
+          <span class="user-status-dot online"></span>
+        </div>
+        <div class="sidebar-user-info">
+          <span id="sidebar-display-name" class="sidebar-user-name">Vyankatesh</span>
+          <span id="sidebar-user-role" class="sidebar-user-role">LPU Student • Sanctuary</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER MAIN WORKSPACE -->
+    <main class="dashboard-main">
+      
+      <!-- TOP HEADER BAR -->
+      <header class="main-top-header">
+        <div class="header-left-group">
+          <div class="search-container">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="dashboard-search-input" placeholder="Search your thoughts, tips, guides..." />
+          </div>
+          <span id="current-view-title" class="header-view-badge">Chat with MM</span>
+        </div>
+
+        <div class="header-right-actions">
+          <button id="dash-voice-btn" class="header-action-btn voice-btn" title="Open Voice Orb Mode">
+            <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+            <span>Voice Orb</span>
+          </button>
+
+          <button id="header-notification-btn" class="header-icon-btn notification-btn" title="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="notification-badge"></span>
+          </button>
+
+          <div class="header-user-badge">
+            <div id="header-user-initial" class="header-avatar">V</div>
+            <div class="header-user-meta">
+              <span id="header-user-name" class="user-greeting-name">Vyankatesh</span>
+              <span class="user-affirmation-text">You're doing great! 🌸</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT AREA — 9 DEDICATED VIEWS -->
+      <section class="main-content-area">
+        
+        <!-- ==================== VIEW 1: CHAT WITH MM ==================== -->
+        <div id="app" class="main-view active chat-main-container">
+          <!-- Tab Bar Navigation inside Chat -->
+          <div class="center-tab-bar">
+            <button id="tab-chat-btn" class="tab-btn active" data-tab="chat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>Chat</span>
+            </button>
+
+            <button id="tab-voice-btn" class="tab-btn" data-tab="voice">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+              </svg>
+              <span>Voice Mode</span>
+            </button>
+
+            <button id="tab-activities-btn" class="tab-btn" data-tab="activities">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span>Activities</span>
+            </button>
+
+            <button id="tab-journal-btn" class="tab-btn" data-tab="journal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <span>Journal</span>
+            </button>
+          </div>
+
+          <!-- CRISIS BANNER -->
+          <div id="crisis-banner" class="crisis-banner hidden">
+            <div class="crisis-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <div class="crisis-content">
+              <p><strong>It sounds like things are really hard right now.</strong> You don't have to carry this alone. Immediate, confidential support is available 24/7:</p>
+              <div id="helpline-list" class="helpline-list"></div>
+            </div>
+          </div>
+
+          <!-- CHAT STREAM WINDOW -->
+          <div id="chat-window" class="chat-window">
+            <!-- Companion Welcome Banner Card -->
+            <div class="chat-welcome-hero-card">
+              <div class="companion-avatar-wrap">
+                <img src="assets/mannmitra-icon.png" alt="MannMitra" class="hero-companion-img" />
+              </div>
+              <div class="hero-welcome-text">
+                <h3 id="chat-hero-greeting">Welcome! I'm MannMitra 🌸</h3>
+                <p>This is a safe, supportive space to reflect. Whatever is on your mind—studies, stress, relationships, or just a heavy day—I'm here to listen without judgment.</p>
+              </div>
+            </div>
+
+            <!-- Quick Suggestion Prompt Chips -->
+            <div class="quick-prompts-container">
+              <span class="prompts-label">Suggested reflections:</span>
+              <div class="prompts-grid">
+                <button class="prompt-chip" data-prompt="Bhai ekdum dimaag ka dahi ho chuka hai assignments aur exams se.">
+                  <span>📚 Assignment & Exam Pressure</span>
+                </button>
+                <button class="prompt-chip" data-prompt="I'm feeling very overwhelmed right now. Can you help me calm down?">
+                  <span>🌿 Help Me Calm Down</span>
+                </button>
+                <button class="prompt-chip" data-prompt="Hostel mein akela lag raha hai, sab apne kaam mein busy hain.">
+                  <span>🏠 Hostel Loneliness</span>
+                </button>
+                <button class="prompt-chip" data-prompt="Can we do a quick 2-minute breathing exercise together?">
+                  <span>💨 Guided Breathing</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Initial Bot Message -->
+            <div class="message bot">
+              <div class="message-avatar">
+                <img src="assets/mannmitra-icon.png" alt="MannMitra" class="bot-logo-img" />
+              </div>
+              <div class="message-bubble">
+                <p id="chat-initial-message">Hi Vyankatesh. Take your time, there is no rush here. What's on your mind today?</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- INPUT COMPOSER AREA -->
+          <div class="input-area">
+            <div class="input-container">
+              <button type="button" id="chat-prompt-assist-btn" class="attachment-btn" title="Add a prompt topic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                </svg>
+              </button>
+              
+              <input id="text-input" type="text" placeholder="Share what's on your mind... I'm here to listen" />
+              
+              <button id="mic-btn" class="mic-btn" title="Speak instead of typing (Speech-to-Text)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" y1="19" x2="12" y2="23"></line>
+                  <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+              </button>
+
+              <button id="send-btn" class="send-btn" title="Send message">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </div>
+
+            <p class="disclaimer">
+              MannMitra offers supportive, empathetic AI conversation and does not replace professional therapy. In an emergency, please contact LPU counseling services or call 112 / 1800-891-4416.
+            </p>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 2: MY WELLBEING ==================== -->
+        <div id="view-wellbeing" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Personal Overview</span>
+              <h2 class="view-page-title">My Wellbeing</h2>
+              <p class="view-page-desc">A holistic snapshot of your check-ins, daily intentions, and mindful progress.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <div class="wellbeing-grid">
+            <!-- 1. Today's Check-in Status -->
+            <div class="page-card">
+              <div class="card-header-flex">
+                <h3 class="card-subtitle-bold">1. Today's Check-in</h3>
+                <span class="status-pill-green">Active Today</span>
+              </div>
+              <p class="card-body-text">Taking a moment to pause is a powerful act of self-care. You have checked in today.</p>
+              <div class="checkin-stat-badge">
+                <span class="stat-number">3</span>
+                <span class="stat-label">Check-ins this week</span>
+              </div>
+            </div>
+
+            <!-- 2. Today's Mood -->
+            <div class="page-card">
+              <div class="card-header-flex">
+                <h3 class="card-subtitle-bold">2. Current Mood</h3>
+                <span id="wellbeing-current-mood-tag" class="status-pill-purple">Good 😊</span>
+              </div>
+              <p class="card-body-text">Your feelings are valid. Honor where you are right now without judgment.</p>
+              <button id="wellbeing-log-mood-btn" class="btn-outline-pill small-btn">Update Mood</button>
+            </div>
+
+            <!-- 3. Personal Intention -->
+            <div class="page-card full-width-sm">
+              <div class="card-header-flex">
+                <h3 class="card-subtitle-bold">3. Personal Intention for Today</h3>
+                <span class="status-pill-blue">Mindful Focus</span>
+              </div>
+              <p class="card-body-text">Choose one small gentle intention to carry with you:</p>
+              <div class="intention-chips-row">
+                <button class="intention-chip active" data-intention="Breathe before reacting">🌿 Breathe before reacting</button>
+                <button class="intention-chip" data-intention="Take proper study breaks">⏳ Take proper study breaks</button>
+                <button class="intention-chip" data-intention="Be gentle with mistakes">💖 Be gentle with mistakes</button>
+                <button class="intention-chip" data-intention="Stay hydrated & rested">💧 Stay hydrated & rested</button>
+              </div>
+              <div class="custom-intention-row">
+                <input type="text" id="custom-intention-input" placeholder="Or write your own intention..." />
+                <button id="save-intention-btn" class="btn-primary-gradient small-btn">Set Intention</button>
+              </div>
+            </div>
+
+            <!-- 4. Recent Reflections -->
+            <div class="page-card">
+              <h3 class="card-subtitle-bold">4. Recent Reflections</h3>
+              <div id="reflections-empty-state" class="clean-empty-state">
+                <span class="empty-icon">✍️</span>
+                <p>No saved reflections yet today.</p>
+                <small>Conversations and journal entries will appear here as gentle highlights.</small>
+              </div>
+            </div>
+
+            <!-- 5. Suggested Activities -->
+            <div class="page-card">
+              <h3 class="card-subtitle-bold">5. Suggested Activities</h3>
+              <div class="activity-suggestions-list">
+                <button class="activity-suggestion-item" data-action="relax-breathe">
+                  <span class="act-emoji">🧘</span>
+                  <div>
+                    <strong>2-Min Box Breathing</strong>
+                    <small>Soothe racing thoughts</small>
+                  </div>
+                </button>
+                <button class="activity-suggestion-item" data-action="guided-support">
+                  <span class="act-emoji">🗺️</span>
+                  <div>
+                    <strong>Guided Reflection Journey</strong>
+                    <small>Address exam & assignment pressure</small>
+                  </div>
+                </button>
+                <button class="activity-suggestion-item" data-action="chat">
+                  <span class="act-emoji">💬</span>
+                  <div>
+                    <strong>Chat with MannMitra</strong>
+                    <small>Express whatever is on your mind</small>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- 6. Weekly Snapshot -->
+            <div class="page-card">
+              <h3 class="card-subtitle-bold">6. Weekly Snapshot</h3>
+              <p class="card-body-text">Summary of your consistency over the last 7 days:</p>
+              <div class="weekly-dot-tracker">
+                <div class="day-dot-item"><span class="dot done"></span><small>Mon</small></div>
+                <div class="day-dot-item"><span class="dot done"></span><small>Tue</small></div>
+                <div class="day-dot-item"><span class="dot done"></span><small>Wed</small></div>
+                <div class="day-dot-item"><span class="dot active"></span><small>Thu</small></div>
+                <div class="day-dot-item"><span class="dot"></span><small>Fri</small></div>
+                <div class="day-dot-item"><span class="dot"></span><small>Sat</small></div>
+                <div class="day-dot-item"><span class="dot"></span><small>Sun</small></div>
+              </div>
+              <small class="demo-tag">Prototype demonstration data</small>
+            </div>
+
+            <!-- 7. Support Reminder -->
+            <div class="page-card reminder-card">
+              <h3 class="card-subtitle-bold">7. Support Reminder</h3>
+              <p class="card-body-text">Remember: You are never expected to handle severe distress on your own. Campus counselors and emergency helplines are available.</p>
+              <button id="wellbeing-to-college-help-btn" class="btn-outline-pill small-btn">View College Help (LPU)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 3: MOOD TRACKER ==================== -->
+        <div id="view-mood-tracker" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Emotional Patterns</span>
+              <h2 class="view-page-title">Mood Tracker</h2>
+              <p class="view-page-desc">Track and reflect upon your mood fluctuations without judgment or clinical diagnosis.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <div class="mood-tracker-container">
+            <!-- Mood Entry Section -->
+            <div class="page-card">
+              <h3 class="card-subtitle-bold">How are you feeling right now?</h3>
+              <div class="mood-grid-large">
+                <button class="mood-select-btn" data-mood="Terrible">
+                  <span class="mood-emoji-lg">😭</span>
+                  <span class="mood-name-lg">Terrible</span>
+                </button>
+                <button class="mood-select-btn" data-mood="Sad">
+                  <span class="mood-emoji-lg">😔</span>
+                  <span class="mood-name-lg">Sad</span>
+                </button>
+                <button class="mood-select-btn" data-mood="Okay">
+                  <span class="mood-emoji-lg">😐</span>
+                  <span class="mood-name-lg">Okay</span>
+                </button>
+                <button class="mood-select-btn" data-mood="Good">
+                  <span class="mood-emoji-lg">😊</span>
+                  <span class="mood-name-lg">Good</span>
+                </button>
+                <button class="mood-select-btn" data-mood="Great">
+                  <span class="mood-emoji-lg">🌟</span>
+                  <span class="mood-name-lg">Great</span>
+                </button>
+              </div>
+
+              <div class="mood-note-box">
+                <label for="mood-note-input">Optional Note (What's contributing to this feeling?):</label>
+                <textarea id="mood-note-input" rows="2" placeholder="e.g., Felt overwhelmed by external examiners, took a deep breath..."></textarea>
+                <div class="mood-action-row">
+                  <button id="save-mood-entry-btn" class="btn-primary-gradient small-btn">Save Mood Entry</button>
+                  <button id="cancel-mood-entry-btn" class="btn-ghost-secondary small-btn">Clear Note</button>
+                  <span id="mood-save-status" class="status-msg hidden">Saved to prototype state!</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mood History & Visualization Grid -->
+            <div class="mood-views-grid">
+              <!-- Calendar View -->
+              <div class="page-card">
+                <div class="card-header-flex">
+                  <h3 class="card-subtitle-bold">Mood Calendar</h3>
+                  <div class="view-toggle-pills">
+                    <button id="mood-view-weekly-btn" class="toggle-pill active">Weekly</button>
+                    <button id="mood-view-monthly-btn" class="toggle-pill">Monthly</button>
+                  </div>
+                </div>
+                <div id="mood-calendar-container" class="calendar-display">
+                  <!-- Generated via JavaScript -->
+                </div>
+                <div class="calendar-legend">
+                  <span>😭 Terrible</span>
+                  <span>😔 Sad</span>
+                  <span>😐 Okay</span>
+                  <span>😊 Good</span>
+                  <span>🌟 Great</span>
+                </div>
+              </div>
+
+              <!-- Distribution & History -->
+              <div class="page-card">
+                <h3 class="card-subtitle-bold">Mood Distribution (Past 14 Days)</h3>
+                <div class="distribution-bars">
+                  <div class="dist-row">
+                    <span>🌟 Great</span>
+                    <div class="bar-track"><div class="bar-fill great" style="width: 25%;"></div></div>
+                    <span>25%</span>
+                  </div>
+                  <div class="dist-row">
+                    <span>😊 Good</span>
+                    <div class="bar-track"><div class="bar-fill good" style="width: 35%;"></div></div>
+                    <span>35%</span>
+                  </div>
+                  <div class="dist-row">
+                    <span>😐 Okay</span>
+                    <div class="bar-track"><div class="bar-fill okay" style="width: 20%;"></div></div>
+                    <span>20%</span>
+                  </div>
+                  <div class="dist-row">
+                    <span>😔 Sad</span>
+                    <div class="bar-track"><div class="bar-fill sad" style="width: 15%;"></div></div>
+                    <span>15%</span>
+                  </div>
+                  <div class="dist-row">
+                    <span>😭 Terrible</span>
+                    <div class="bar-track"><div class="bar-fill terrible" style="width: 5%;"></div></div>
+                    <span>5%</span>
+                  </div>
+                </div>
+
+                <div class="recent-history-section">
+                  <h4 class="mini-header">Recent Recorded Moods</h4>
+                  <ul id="mood-history-list" class="mood-history-list">
+                    <!-- Populated via JS -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <p class="demo-footer-note">Note: Mood entries in this prototype are stored in frontend session storage. No clinical diagnosis is derived from your mood logs.</p>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 4: RELAX & BREATHE ==================== -->
+        <div id="view-relax-breathe" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Nervous System Regulation</span>
+              <h2 class="view-page-title">Relax & Breathe</h2>
+              <p class="view-page-desc">Scientifically supported breathing rhythms and grounding exercises to ease anxiety and somatic tension.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <div class="relax-breathe-container">
+            <!-- Exercise Selector Tabs -->
+            <div class="breathe-exercises-row">
+              <button class="breathe-tab-card active" data-exercise="box">
+                <span class="tab-badge">4-4-4-4</span>
+                <h4>Box Breathing</h4>
+                <p>Balances autonomic nervous system during acute stress.</p>
+              </button>
+              <button class="breathe-tab-card" data-exercise="gentle">
+                <span class="tab-badge">4-6</span>
+                <h4>Gentle Breathing</h4>
+                <p>Longer exhales to stimulate the vagus nerve and slow heart rate.</p>
+              </button>
+              <button class="breathe-tab-card" data-exercise="grounding">
+                <span class="tab-badge">5-4-3-2-1</span>
+                <h4>Sensory Grounding</h4>
+                <p>Re-connect with physical senses during emotional spirals.</p>
+              </button>
+              <button class="breathe-tab-card" data-exercise="pause">
+                <span class="tab-badge">1 Min</span>
+                <h4>Short Calm Pause</h4>
+                <p>Quick reset between study sessions or exam preparations.</p>
+              </button>
+            </div>
+
+            <!-- Central Interactive Breathing Area -->
+            <div class="page-card breathing-active-card">
+              <div class="breathe-duration-controls">
+                <span class="control-label">Duration:</span>
+                <button class="duration-btn active" data-mins="1">1 Min</button>
+                <button class="duration-btn" data-mins="3">3 Mins</button>
+                <button class="duration-btn" data-mins="5">5 Mins</button>
+                <button id="sound-toggle-btn" class="sound-toggle-btn" title="Toggle sound chimes">
+                  <span id="sound-icon">🔈</span>
+                  <span id="sound-label">Chimes: Off</span>
+                </button>
+              </div>
+
+              <!-- Animated Orb Visual -->
+              <div class="breathe-stage">
+                <div class="breathe-ring-wrapper">
+                  <svg class="breathe-svg-ring" viewBox="0 0 240 240">
+                    <circle class="ring-bg" cx="120" cy="120" r="100"></circle>
+                    <circle id="page-breathe-ring" class="ring-active" cx="120" cy="120" r="100"></circle>
+                  </svg>
+                  <div id="page-breathe-orb" class="page-breathe-orb idle"></div>
+                </div>
+                <h3 id="page-breathe-phase-text" class="breathe-phase-text">Ready to Begin</h3>
+                <p id="page-breathe-guide-text" class="breathe-guide-text">Follow the gentle expansion and contraction of the orb.</p>
+              </div>
+
+              <!-- Player Controls -->
+              <div class="breathe-buttons-row">
+                <button id="breathe-start-btn" class="btn-primary-gradient">
+                  <span>Start Exercise</span>
+                </button>
+                <button id="breathe-pause-btn" class="btn-outline-pill hidden">
+                  <span>Pause</span>
+                </button>
+                <button id="breathe-stop-btn" class="btn-ghost-secondary hidden">
+                  <span>Stop</span>
+                </button>
+                <button id="open-overlay-breathe-btn" class="btn-outline-pill" title="Open full screen overlay">
+                  <span>Fullscreen Mode ↗</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Completion Reflection Box -->
+            <div id="breathe-completion-card" class="page-card completion-card hidden">
+              <span class="completion-star">✨</span>
+              <h3>Session Completed</h3>
+              <p>Well done for honoring this time for yourself. How does your body feel right now?</p>
+              <div class="completion-actions">
+                <button class="btn-outline-pill to-chat-reflect-btn" data-msg="I just finished a breathing exercise and feel a bit more relaxed.">Talk with MM about how you feel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 5: GUIDED SUPPORT ==================== -->
+        <div id="view-guided-support" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Structured Reflection</span>
+              <h2 class="view-page-title">Guided Support Journeys</h2>
+              <p class="view-page-desc">Non-judgmental, structured pathways designed around frequent campus life experiences.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <!-- Journeys Grid View -->
+          <div id="journeys-grid-section" class="journeys-grid">
+            <!-- 1. Exam & Assignment Pressure -->
+            <div class="journey-card-interactive" data-journey="exam">
+              <div class="journey-icon-wrap">📚</div>
+              <div class="journey-card-content">
+                <span class="journey-tag">Academic Wellbeing</span>
+                <h3>Exam & Assignment Pressure</h3>
+                <p>When deadlines pile up, external examiners feel strict, or your mind freezes before tasks.</p>
+                <div class="journey-meta">
+                  <span>⏱️ 4-Step Journey</span>
+                  <span>🌿 Grounding & Pacing</span>
+                </div>
+                <button class="btn-primary-gradient start-journey-btn" data-journey="exam">Begin Journey →</button>
+              </div>
+            </div>
+
+            <!-- 2. Hostel Loneliness -->
+            <div class="journey-card-interactive" data-journey="hostel">
+              <div class="journey-icon-wrap">🏠</div>
+              <div class="journey-card-content">
+                <span class="journey-tag">Social & Belonging</span>
+                <h3>Hostel Loneliness</h3>
+                <p>Navigating hostel life when everyone seems to have their group and your room feels isolating.</p>
+                <div class="journey-meta">
+                  <span>⏱️ 4-Step Journey</span>
+                  <span>🤝 Connection & Self-Kindness</span>
+                </div>
+                <button class="btn-primary-gradient start-journey-btn" data-journey="hostel">Begin Journey →</button>
+              </div>
+            </div>
+
+            <!-- 3. Feeling Overwhelmed -->
+            <div class="journey-card-interactive" data-journey="overwhelm">
+              <div class="journey-icon-wrap">🌊</div>
+              <div class="journey-card-content">
+                <span class="journey-tag">Emotional Regulation</span>
+                <h3>Feeling Overwhelmed</h3>
+                <p>A quick grounding sequence when thoughts are racing and everything feels too loud.</p>
+                <div class="journey-meta">
+                  <span>⏱️ 3-Step Journey</span>
+                  <span>🧘 Somatic Reset</span>
+                </div>
+                <button class="btn-primary-gradient start-journey-btn" data-journey="overwhelm">Begin Journey →</button>
+              </div>
+            </div>
+
+            <!-- 4. Self-Confidence -->
+            <div class="journey-card-interactive" data-journey="confidence">
+              <div class="journey-icon-wrap">🌱</div>
+              <div class="journey-card-content">
+                <span class="journey-tag">Personal Growth</span>
+                <h3>Self-Confidence & Comparison</h3>
+                <p>Reframing the comparison trap when social media or classmates trigger imposter feelings.</p>
+                <div class="journey-meta">
+                  <span>⏱️ 4-Step Journey</span>
+                  <span>✨ Perspective & Strengths</span>
+                </div>
+                <button class="btn-primary-gradient start-journey-btn" data-journey="confidence">Begin Journey →</button>
+              </div>
+            </div>
+
+            <!-- 5. Daily Reflection -->
+            <div class="journey-card-interactive" data-journey="daily">
+              <div class="journey-icon-wrap">🌙</div>
+              <div class="journey-card-content">
+                <span class="journey-tag">Evening Routine</span>
+                <h3>Daily Evening Decompression</h3>
+                <p>Unpack today's experiences, close mental tabs, and transition into peaceful rest.</p>
+                <div class="journey-meta">
+                  <span>⏱️ 3-Step Journey</span>
+                  <span>🪔 Gratitude & Rest</span>
+                </div>
+                <button class="btn-primary-gradient start-journey-btn" data-journey="daily">Begin Journey →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Journey Modal / Runner -->
+          <div id="active-journey-runner" class="page-card active-journey-card hidden">
+            <div class="journey-runner-header">
+              <span id="runner-journey-title" class="runner-title">Exam & Assignment Pressure</span>
+              <span id="runner-step-counter" class="runner-counter">Step 1 of 4</span>
+              <button id="exit-journey-btn" class="exit-btn" title="Exit Journey">✕</button>
+            </div>
+            
+            <div class="runner-progress-bar">
+              <div id="runner-progress-fill" class="runner-progress-fill" style="width: 25%;"></div>
+            </div>
+
+            <div class="runner-body">
+              <h3 id="runner-step-heading">Acknowledge the Weight</h3>
+              <p id="runner-step-content">It is completely normal to feel frozen when assignments and exams collide. You don't have to tackle the whole semester in one sitting.</p>
+              
+              <div id="runner-interaction-area" class="runner-interaction-area">
+                <!-- Dynamic prompts / questions injected via JS -->
+              </div>
+            </div>
+
+            <div class="runner-footer-nav">
+              <button id="runner-back-btn" class="btn-ghost-secondary small-btn" disabled>Back</button>
+              <button id="runner-skip-btn" class="btn-ghost-secondary small-btn">Skip Step</button>
+              <button id="runner-next-btn" class="btn-primary-gradient small-btn">Continue →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 6: COLLEGE HELP (LPU) ==================== -->
+        <div id="view-college-help" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Verified Campus Directory</span>
+              <h2 class="view-page-title">College Help (LPU)</h2>
+              <p class="view-page-desc">Accurate, verified campus locations, counseling resources, and student welfare contacts at Lovely Professional University.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <!-- Category Filter Bar -->
+          <div class="campus-category-tabs">
+            <button class="campus-cat-btn active" data-cat="all">All Campus Resources</button>
+            <button class="campus-cat-btn" data-cat="counseling">Counseling & Happiness</button>
+            <button class="campus-cat-btn" data-cat="dsr">DSR (Student Relations)</button>
+            <button class="campus-cat-btn" data-cat="hostel">Residential & Hostels</button>
+            <button class="campus-cat-btn" data-cat="fees">Fee & Academic</button>
+            <button class="campus-cat-btn" data-cat="emergency">Emergency Helplines</button>
+          </div>
+
+          <!-- Verified Campus Resource Cards -->
+          <div class="campus-cards-grid">
+            
+            <!-- 1. Division of Counseling and Happiness -->
+            <div class="campus-resource-card" data-cat="counseling">
+              <div class="resource-badge verified">Verified LPU Department</div>
+              <h3 class="campus-res-name">Department of Counseling and Happiness</h3>
+              <p class="campus-res-desc">Confidential student counseling, mental health workshops, and one-on-one wellbeing support.</p>
+              <div class="campus-detail-list">
+                <div class="detail-row">
+                  <span class="detail-label">📍 Location:</span>
+                  <span class="detail-val">Building 8, Room 208</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">🕒 Timings:</span>
+                  <span class="detail-val">Mon–Sat: 9:00 AM – 7:00 PM | Sun: 10:00 AM – 4:00 PM</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">🚪 How to Access:</span>
+                  <span class="detail-val">Walk-in directly or book appointment via UMS portal</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">📞 Direct Contact:</span>
+                  <span class="detail-val text-muted">No dedicated public direct telephone listed; accessible in-person at Building 8-208</span>
+                </div>
+              </div>
+              <div class="res-source-footer">
+                <small>Source: LPU official Department of Counseling and Happiness</small>
+              </div>
+            </div>
+
+            <!-- 2. Division of Student Relationship (DSR) -->
+            <div class="campus-resource-card" data-cat="dsr">
+              <div class="resource-badge verified">Verified LPU Department</div>
+              <h3 class="campus-res-name">Division of Student Relationship (DSR)</h3>
+              <p class="campus-res-desc">Student welfare, mentoring, administrative guidance, and formal student grievance redressal.</p>
+              <div class="campus-detail-list">
+                <div class="detail-row">
+                  <span class="detail-label">📍 Location:</span>
+                  <span class="detail-val">Block 32, Room No. 100</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">📞 Enquiry Phone:</span>
+                  <span class="detail-val"><strong>01824-520150</strong></span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">🚪 How to Access:</span>
+                  <span class="detail-val">In-person assistance or enquiry desk</span>
+                </div>
+              </div>
+              <div class="res-source-footer">
+                <small>Source: LPU official Mentoring & Advising / DSR</small>
+              </div>
+            </div>
+
+            <!-- 3. Residential Facilities & Hostels -->
+            <div class="campus-resource-card" data-cat="hostel">
+              <div class="resource-badge notice">Residential Guidance</div>
+              <h3 class="campus-res-name">Campus Residential Services & Hostels</h3>
+              <p class="campus-res-desc">LPU operates Boys Hostels (BH-01 to BH-13) and Girls Hostels (GH-01 to GH-12).</p>
+              <div class="campus-detail-list">
+                <div class="detail-row">
+                  <span class="detail-label">📍 Specific Blocks:</span>
+                  <span class="detail-val">Public mapping is unverified. Check your hostel allotment in UMS.</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">ℹ️ In Case of Query:</span>
+                  <span class="detail-val">Contact your respective Hostel Warden or the Chief Warden Office.</span>
+                </div>
+              </div>
+              <div class="res-source-footer">
+                <small>Source: LPU official residential documentation</small>
+              </div>
+            </div>
+
+            <!-- 4. Fee & Academic Notices -->
+            <div class="campus-resource-card" data-cat="fees">
+              <div class="resource-badge notice">Academic Notice</div>
+              <h3 class="campus-res-name">Tuition Fee & Academic Timelines</h3>
+              <p class="campus-res-desc">Fee payment dates vary by programme and semester notice. Do not assume reappear application dates apply to general tuition.</p>
+              <div class="campus-detail-list">
+                <div class="detail-row">
+                  <span class="detail-label">📅 Exact Deadline:</span>
+                  <span class="detail-val">Check the Fee & Dues tab under your personal UMS account.</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">📍 Accounts Office:</span>
+                  <span class="detail-val">Block 32 (Administrative Building)</span>
+                </div>
+              </div>
+              <div class="res-source-footer">
+                <small>Source: LPU Academic Calendar & UMS Fee Notice guidelines</small>
+              </div>
+            </div>
+
+            <!-- 5. Emergency Helplines -->
+            <div class="campus-resource-card emergency-border" data-cat="emergency">
+              <div class="resource-badge emergency">24/7 Verified Helplines</div>
+              <h3 class="campus-res-name">Emergency & Crisis Helplines</h3>
+              <p class="campus-res-desc">National toll-free round-the-clock psychological and medical emergency support.</p>
+              <div class="campus-detail-list">
+                <div class="detail-row">
+                  <span class="detail-label">🚨 Police / Ambulance / General:</span>
+                  <span class="detail-val"><strong>112</strong></span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">🌸 Tele-MANAS (Govt of India):</span>
+                  <span class="detail-val"><strong>1800-891-4416</strong> (or 14416)</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">🤝 Vandrevala Foundation:</span>
+                  <span class="detail-val"><strong>9999 666 555</strong></span>
+                </div>
+              </div>
+              <div class="res-source-footer">
+                <small>Available 24 hours a day, 7 days a week, free of charge</small>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 7: GENERAL RESOURCES LIBRARY ==================== -->
+        <div id="view-resources-library" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Self-Help & Psychoeducation</span>
+              <h2 class="view-page-title">Wellbeing Resources Library</h2>
+              <p class="view-page-desc">Curated articles, evidence-informed strategies, and self-care practices for students.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div class="resources-toolbar">
+            <div class="resource-search-box">
+              <input type="text" id="lib-search-input" placeholder="Search guides by topic, feeling, or symptom..." />
+            </div>
+            <div class="lib-category-filters">
+              <button class="lib-cat-btn active" data-category="all">All Topics</button>
+              <button class="lib-cat-btn" data-category="stress">Stress & Study</button>
+              <button class="lib-cat-btn" data-category="emotional">Emotional Wellbeing</button>
+              <button class="lib-cat-btn" data-category="mindfulness">Mindfulness</button>
+              <button class="lib-cat-btn" data-category="journaling">Journaling</button>
+              <button class="lib-cat-btn" data-category="sleep">Sleep & Routine</button>
+              <button class="lib-cat-btn" data-category="relationships">Relationships</button>
+              <button class="lib-cat-btn" data-category="support">Help & Support</button>
+            </div>
+          </div>
+
+          <!-- Resource Cards Grid -->
+          <div id="lib-cards-grid" class="lib-cards-grid">
+            <!-- Rendered by JavaScript (14+ curated guides) -->
+          </div>
+
+          <!-- Resource Detail Modal / View -->
+          <div id="lib-detail-modal" class="lib-detail-modal hidden">
+            <div class="lib-detail-card">
+              <button id="close-lib-detail-btn" class="close-detail-btn">✕</button>
+              <span id="detail-category-tag" class="lib-tag">Mindfulness</span>
+              <h2 id="detail-title">Understanding Academic Overwhelm</h2>
+              <div class="detail-meta">
+                <span id="detail-read-time">📖 4 min read</span>
+                <span id="detail-author">MannMitra Wellness Guide</span>
+              </div>
+              <div id="detail-content" class="detail-content-body">
+                <!-- Injected via JS -->
+              </div>
+              <div class="detail-footer-actions">
+                <button id="discuss-guide-with-mm-btn" class="btn-primary-gradient">Discuss This with MannMitra</button>
+                <button id="bookmark-guide-btn" class="btn-outline-pill">Bookmark Guide</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 8: MY JOURNEY ==================== -->
+        <div id="view-my-journey" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Personal Milestones</span>
+              <h2 class="view-page-title">My Journey</h2>
+              <p class="view-page-desc">A gentle timeline of your self-care practices, check-ins, and mindful pauses.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <div class="journey-page-content">
+            <!-- Summary Stats -->
+            <div class="journey-stats-row">
+              <div class="page-card stat-tile">
+                <span class="stat-big-number">7</span>
+                <span class="stat-tile-label">Days Active</span>
+              </div>
+              <div class="page-card stat-tile">
+                <span class="stat-big-number">18</span>
+                <span class="stat-tile-label">Mindful Minutes</span>
+              </div>
+              <div class="page-card stat-tile">
+                <span class="stat-big-number">4</span>
+                <span class="stat-tile-label">Milestones Reached</span>
+              </div>
+              <div class="page-card stat-tile">
+                <span class="stat-big-number">Level 3</span>
+                <span class="stat-tile-label">Mindful Seeker</span>
+              </div>
+            </div>
+
+            <!-- Milestones Row -->
+            <div class="page-card">
+              <h3 class="card-subtitle-bold">Personal Milestones</h3>
+              <div class="milestones-flex-row">
+                <div class="milestone-badge-item unlocked">
+                  <div class="m-icon">🌱</div>
+                  <strong>First Check-in</strong>
+                  <small>Took your first step</small>
+                </div>
+                <div class="milestone-badge-item unlocked">
+                  <div class="m-icon">🧘</div>
+                  <strong>Breathe Easy</strong>
+                  <small>Completed 5 breathing pauses</small>
+                </div>
+                <div class="milestone-badge-item unlocked">
+                  <div class="m-icon">✍️</div>
+                  <strong>Inner Voice</strong>
+                  <small>Logged your first reflection</small>
+                </div>
+                <div class="milestone-badge-item in-progress">
+                  <div class="m-icon">🌟</div>
+                  <strong>Calm Master</strong>
+                  <small>90 XP to unlock</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="page-card">
+              <h3 class="card-subtitle-bold">Activity Timeline</h3>
+              <div class="timeline-container">
+                <div class="timeline-entry">
+                  <div class="timeline-dot checkin"></div>
+                  <div class="timeline-content">
+                    <div class="entry-header">
+                      <strong>Mood Check-in: Good 😊</strong>
+                      <span class="entry-time">Today, 2:15 PM</span>
+                    </div>
+                    <p>Noted feeling lighter after finishing assignment drafts.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-entry">
+                  <div class="timeline-dot breathe"></div>
+                  <div class="timeline-content">
+                    <div class="entry-header">
+                      <strong>Box Breathing Session</strong>
+                      <span class="entry-time">Yesterday, 9:30 PM</span>
+                    </div>
+                    <p>Completed 2 minutes of calming 4-4-4-4 rhythm before sleep.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-entry">
+                  <div class="timeline-dot journey"></div>
+                  <div class="timeline-content">
+                    <div class="entry-header">
+                      <strong>Guided Support: Exam Pressure</strong>
+                      <span class="entry-time">2 days ago</span>
+                    </div>
+                    <p>Explored pacing strategies for academic workload.</p>
+                  </div>
+                </div>
+              </div>
+              <small class="demo-tag">Demonstration timeline showing prototype capabilities</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 9: SETTINGS ==================== -->
+        <div id="view-settings" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Preferences & Privacy</span>
+              <h2 class="view-page-title">Settings</h2>
+              <p class="view-page-desc">Customize your sanctuary experience, voice preferences, appearance, and accessibility.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <div class="settings-sections-wrapper">
+            <!-- 1. Account & Profile -->
+            <div class="settings-card">
+              <h3 class="settings-section-title">1. Account & Profile</h3>
+              <div class="settings-form-row">
+                <label for="settings-display-name">Display Name:</label>
+                <div class="settings-input-flex">
+                  <input type="text" id="settings-display-name" value="Vyankatesh" />
+                  <button id="save-display-name-btn" class="btn-primary-gradient small-btn">Save</button>
+                </div>
+                <small class="settings-helper-text">Used for personalized greetings and companion dialogue.</small>
+              </div>
+              <div class="settings-info-badge">
+                <span>👤 Status: Local Sanctuary Prototype Mode (No external tracking)</span>
+              </div>
+            </div>
+
+            <!-- 2. Appearance -->
+            <div class="settings-card">
+              <h3 class="settings-section-title">2. Appearance</h3>
+              <div class="settings-form-row">
+                <label>Theme:</label>
+                <div class="theme-options-row">
+                  <button class="theme-opt-btn active" data-theme="light">☀️ Light Theme</button>
+                  <button class="theme-opt-btn" data-theme="dark">🌙 Dark Theme</button>
+                  <button class="theme-opt-btn" data-theme="system">💻 System Default</button>
+                </div>
+              </div>
+              <div class="settings-form-row">
+                <label>Accent Color Palette:</label>
+                <div class="accent-options-row">
+                  <button class="accent-opt-btn active" data-accent="pink-purple">🌸 Lavender Sunset (Default)</button>
+                  <button class="accent-opt-btn" data-accent="ocean-calm">🌊 Ocean Breeze</button>
+                  <button class="accent-opt-btn" data-accent="forest-sage">🌿 Forest Sage</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Voice & Audio -->
+            <div class="settings-card">
+              <h3 class="settings-section-title">3. Voice & Audio</h3>
+              <div class="settings-toggle-row">
+                <div>
+                  <strong>Spoken Welcome Greeting</strong>
+                  <p class="text-muted">Speak short greeting automatically when entering sanctuary.</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="settings-auto-greeting-toggle" checked />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="settings-form-row">
+                <label for="settings-speech-rate">Speech Rate: <span id="speech-rate-val">0.95x</span></label>
+                <input type="range" id="settings-speech-rate" min="0.75" max="1.25" step="0.05" value="0.95" />
+              </div>
+
+              <div class="settings-form-row">
+                <label for="settings-voice-locale">Voice Locale:</label>
+                <select id="settings-voice-locale" class="settings-select">
+                  <option value="en-IN" selected>Indian English (en-IN)</option>
+                  <option value="en-US">US English (en-US)</option>
+                  <option value="en-GB">British English (en-GB)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 4. Privacy & Data Handling -->
+            <div class="settings-card">
+              <h3 class="settings-section-title">4. Privacy & Data Handling</h3>
+              <p class="card-body-text">
+                MannMitra prototype processes your chat either through a local or configured model. Prototype records such as mood selections and reflections are stored strictly in your browser session storage.
+              </p>
+              <div class="settings-action-row">
+                <button id="clear-demo-data-btn" class="btn-ghost-secondary small-btn danger-text">Clear Local Demo Data</button>
+                <span id="clear-data-status" class="status-msg hidden">Local data cleared!</span>
+              </div>
+            </div>
+
+            <!-- 5. Accessibility -->
+            <div class="settings-card">
+              <h3 class="settings-section-title">5. Accessibility</h3>
+              <div class="settings-toggle-row">
+                <div>
+                  <strong>Reduce Motion</strong>
+                  <p class="text-muted">Disable intense pulse and ripple animations on the orb and breathing views.</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="settings-reduced-motion-toggle" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="settings-form-row">
+                <label>Text Sizing:</label>
+                <div class="font-size-options">
+                  <button class="font-opt-btn active" data-size="default">Default</button>
+                  <button class="font-opt-btn" data-size="large">Large (+15%)</button>
+                  <button class="font-opt-btn" data-size="xlarge">Extra Large (+30%)</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Notifications & Reminders (UI Only) -->
+            <div class="settings-card">
+              <h3 class="settings-section-title">6. Notifications & Daily Check-in Reminder</h3>
+              <p class="card-body-text">Set a gentle daily reminder to pause and reflect (Prototype interface):</p>
+              <div class="settings-form-row">
+                <input type="time" id="reminder-time-input" value="20:00" />
+                <small class="settings-helper-text">Requires backend push service integration to trigger external alerts.</small>
+              </div>
+            </div>
+
+            <!-- 7. About MannMitra -->
+            <div class="settings-card">
+              <h3 class="settings-section-title">7. About MannMitra</h3>
+              <p class="card-body-text">
+                <strong>MannMitra Prototype Version 2.0.0</strong><br>
+                A compassionate AI wellbeing companion designed for university students.
+              </p>
+              <p class="disclaimer-text">
+                Disclaimer: MannMitra provides supportive reflection and emotional accompaniment. It is not a clinical service, does not prescribe medication, and does not diagnose mental health disorders. In a crisis, please reach out to emergency services immediately.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- RIGHT WELLBEING CONTEXTUAL PANEL (~320px) -->
+    <aside id="dashboard-right-panel" class="dashboard-right-panel">
+      
+      <!-- User Greeting & Profile Snapshot -->
+      <div class="panel-card greeting-panel-card">
+        <div class="panel-card-header">
+          <div class="panel-title-group">
+            <span class="panel-eyebrow">Personal Sanctuary</span>
+            <h3 id="panel-greeting-user" class="panel-heading">Namaste, Vyankatesh 🙏</h3>
+          </div>
+          <div class="panel-date-badge" id="current-date-badge">Today</div>
+        </div>
+        <p class="panel-subtext">You've checked in 3 times this week. Honor where you are right now.</p>
+      </div>
+
+      <!-- Mood Check-in Section -->
+      <div class="panel-card mood-checkin-card">
+        <div class="card-title-row">
+          <span class="card-title-text">Quick Mood Check-in</span>
+          <span class="pulse-indicator"></span>
+        </div>
+        <div class="mood-grid">
+          <button class="mood-btn" data-mood="Terrible" title="Terrible">
+            <span class="mood-emoji">😭</span>
+            <span class="mood-label">Terrible</span>
+          </button>
+          <button class="mood-btn" data-mood="Sad" title="Sad / Low">
+            <span class="mood-emoji">😔</span>
+            <span class="mood-label">Sad</span>
+          </button>
+          <button class="mood-btn" data-mood="Okay" title="Okay / Neutral">
+            <span class="mood-emoji">😐</span>
+            <span class="mood-label">Okay</span>
+          </button>
+          <button class="mood-btn" data-mood="Good" title="Good">
+            <span class="mood-emoji">😊</span>
+            <span class="mood-label">Good</span>
+          </button>
+          <button class="mood-btn" data-mood="Great" title="Great">
+            <span class="mood-emoji">🌟</span>
+            <span class="mood-label">Great</span>
+          </button>
+        </div>
+        <div id="mood-response-banner" class="mood-response-banner hidden"></div>
+      </div>
+
+      <!-- Quick Calming Tools List -->
+      <div class="panel-card quick-tools-card">
+        <div class="card-title-row">
+          <span class="card-title-text">Quick Calming Tools</span>
+        </div>
+        <div class="tools-list">
+          <button id="action-breathing-btn" class="tool-list-item">
+            <div class="tool-icon-box">🧘</div>
+            <div class="tool-text">
+              <span class="tool-name">Guided Breathing</span>
+              <span class="tool-desc">Box breathing (4-4-4-4)</span>
+            </div>
+            <svg class="tool-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          <button id="tool-calm-music-btn" class="tool-list-item">
+            <div class="tool-icon-box">🎶</div>
+            <div class="tool-text">
+              <span class="tool-name">Calm Ambient Sounds</span>
+              <span class="tool-desc">Gentle focus chimes</span>
+            </div>
+            <svg class="tool-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          <button id="tool-affirmations-btn" class="tool-list-item">
+            <div class="tool-icon-box">✨</div>
+            <div class="tool-text">
+              <span class="tool-name">Positive Affirmation</span>
+              <span class="tool-desc">Daily confidence reminder</span>
+            </div>
+            <svg class="tool-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Today's Thought Card -->
+      <div class="panel-card thought-card">
+        <div class="thought-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+          </svg>
+          <span>Today's Thought</span>
+        </div>
+        <p class="thought-quote">
+          "You don't have to control your thoughts. You just have to stop letting them control you."
+        </p>
+        <span class="thought-author">— Loving Reminder</span>
+      </div>
+
+      <!-- Immediate Emergency Support Card -->
+      <div class="panel-card emergency-card">
+        <div class="emergency-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span>Need Immediate Help?</span>
+        </div>
+        <p class="emergency-desc">If you are in distress or crisis, please connect with professional care right away:</p>
+        <div class="emergency-contacts">
+          <div class="emergency-row">
+            <span>Tele-MANAS:</span>
+            <strong>1800-891-4416</strong>
+          </div>
+          <div class="emergency-row">
+            <span>Emergency Police/Ambulance:</span>
+            <strong>112</strong>
+          </div>
+          <div class="emergency-row">
+            <span>LPU Counseling Dept:</span>
+            <strong>Building 8, Room 208</strong>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ==================== VOICE ORB OVERLAY (VOICE MODE) ==================== -->
+  <div id="orb-overlay" class="orb-overlay hidden">
+    <div class="orb-top-bar">
+      <div class="orb-mode-badge">
+        <span class="orb-mode-dot"></span>
+        Voice Mode
+      </div>
+      <button id="orb-close-btn" class="orb-close-btn" title="Exit voice mode" aria-label="Exit voice mode">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
-      <button id="welcome-help-btn" class="welcome-help-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </div>
+
+    <div id="orb-center-container" class="orb-center-container">
+      <div class="orb-rings-container" aria-hidden="true">
+        <div class="orb-ring ring-1"></div>
+        <div class="orb-ring ring-2"></div>
+        <div class="orb-ring ring-3"></div>
+      </div>
+
+      <div id="orb-circle" class="orb-circle idle" role="button" tabindex="0" title="Tap orb to speak" aria-label="Tap orb to speak">
+        <div class="orb-inner-glow"></div>
+      </div>
+
+      <div id="orb-waveform" class="orb-waveform idle" aria-hidden="true">
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+      </div>
+    </div>
+
+    <div class="orb-info-container">
+      <p id="orb-status" class="orb-status" role="status" aria-live="polite">Tap to talk</p>
+      <p id="orb-caption" class="orb-caption">Speak freely, I'm here for you.</p>
+    </div>
+
+    <div class="orb-bottom-controls">
+      <button id="orb-stop-btn" class="orb-stop-btn" aria-label="End voice conversation">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <rect x="6" y="6" width="12" height="12" rx="2"></rect>
         </svg>
-        Need Immediate Support?
+        End Conversation
       </button>
     </div>
   </div>
-</div>
 
-<!-- Dashboard / Home Screen -->
-<div id="dashboard" class="dashboard hidden">
-  <!-- Header -->
-  <header class="app-header">
-    <div class="brand">
-      <div class="brand-avatar">
-        <img src="assets/mannmitra-icon.png" alt="MannMitra" class="brand-logo-img" />
-      </div>
-      <div class="brand-info">
-        <span class="brand-name">MannMitra</span>
-        <span class="brand-status">
-          <span class="status-dot"></span>
-          Always here for you
-        </span>
-      </div>
-    </div>
-    <button id="dash-voice-btn" class="orb-toggle-btn" title="Switch to voice mode">
-      <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-        <line x1="12" y1="19" x2="12" y2="23"/>
-        <line x1="8" y1="23" x2="16" y2="23"/>
-      </svg>
-      Voice Mode
-    </button>
-  </header>
-
-  <!-- Dashboard Main Body -->
-  <div class="dashboard-body">
-    <!-- Greeting Section -->
-    <div class="greeting-card">
-      <h2 class="greeting-title">Hey, how are you feeling today? 👋</h2>
-      <p class="greeting-subtitle">Your feelings are valid. Take a moment for yourself.</p>
+  <!-- ==================== GUIDED BREATHING OVERLAY (PRESERVED) ==================== -->
+  <div id="breathing-overlay" class="breathing-overlay hidden">
+    <div class="breathing-particles" aria-hidden="true">
+      <span class="breathing-particle p1"></span>
+      <span class="breathing-particle p2"></span>
+      <span class="breathing-particle p3"></span>
+      <span class="breathing-particle p4"></span>
     </div>
 
-    <!-- Mood Check-in Section -->
-    <div class="mood-section">
-      <h3 class="section-title">Quick Mood Check-in</h3>
-      <div class="mood-grid">
-        <button class="mood-btn" data-mood="Great">
-          <span class="mood-emoji">😊</span>
-          <span class="mood-label">Great</span>
-        </button>
-        <button class="mood-btn" data-mood="Okay">
-          <span class="mood-emoji">😐</span>
-          <span class="mood-label">Okay</span>
-        </button>
-        <button class="mood-btn" data-mood="Stressed">
-          <span class="mood-emoji">😫</span>
-          <span class="mood-label">Stressed</span>
-        </button>
-        <button class="mood-btn" data-mood="Anxious">
-          <span class="mood-emoji">😰</span>
-          <span class="mood-label">Anxious</span>
-        </button>
-        <button class="mood-btn" data-mood="Low">
-          <span class="mood-emoji">😔</span>
-          <span class="mood-label">Low</span>
-        </button>
-      </div>
-      <div id="mood-response-banner" class="mood-response-banner hidden"></div>
-    </div>
-
-    <!-- Quick Actions Section -->
-    <div class="quick-actions-section">
-      <h3 class="section-title">Quick Actions</h3>
-      <div class="actions-grid">
-        <button id="action-chat-btn" class="action-card primary">
-          <div class="action-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-          </div>
-          <div class="action-info">
-            <span class="action-title">Talk to MannMitra</span>
-            <span class="action-desc">Start a private, safe conversation</span>
-          </div>
-        </button>
-
-        <button id="action-voice-btn" class="action-card secondary">
-          <div class="action-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-              <line x1="12" y1="19" x2="12" y2="23"/>
-              <line x1="8" y1="23" x2="16" y2="23"/>
-            </svg>
-          </div>
-          <div class="action-info">
-            <span class="action-title">Voice Mode</span>
-            <span class="action-desc">Hands-free, real-time voice chat</span>
-          </div>
-        </button>
-
-        <button class="action-card coming-soon">
-          <div class="action-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-          </div>
-          <div class="action-info">
-            <span class="action-title">Daily Journal <span class="badge-cs">Coming Soon</span></span>
-            <span class="action-desc">Track your thoughts & self-reflection</span>
-          </div>
-        </button>
-
-        <button id="action-breathing-btn" class="action-card secondary">
-          <div class="action-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M8 12h8"/>
-              <path d="M12 8v8"/>
-            </svg>
-          </div>
-          <div class="action-info">
-            <span class="action-title">Guided Breathing</span>
-            <span class="action-desc">Quick 2-min calming exercise</span>
-          </div>
-        </button>
-      </div>
-    </div>
-
-    <!-- Today's Thought Card -->
-    <div class="thought-card">
-      <div class="thought-header">
+    <div class="breathing-top-bar">
+      <button id="breathing-close-btn" class="breathing-close-btn" title="Exit breathing exercise">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-        </svg>
-        <span>Today's Thought</span>
-      </div>
-      <p class="thought-quote">"You don't have to control your thoughts. You just have to stop letting them control you."</p>
-      <span class="thought-author">— Loving Reminder</span>
-    </div>
-  </div>
-
-  <!-- Global Bottom Navigation Bar -->
-  <nav class="bottom-nav">
-    <button id="nav-dash-btn" class="nav-item active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
-      <span>Home</span>
-    </button>
-    <button id="nav-chat-btn" class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
-      <span>Chat</span>
-    </button>
-    <button class="nav-item disabled" title="Wellbeing Tracker - Coming Soon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-      </svg>
-      <span>Wellbeing</span>
-    </button>
-    <button id="nav-resources-btn" class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-      </svg>
-      <span>Resources</span>
-    </button>
-  </nav>
-</div>
-
-<div id="app" class="app hidden">
-  <!-- Header -->
-  <header class="app-header">
-    <div class="brand">
-      <div class="brand-avatar">
-        <img src="assets/mannmitra-icon.png" alt="MannMitra" class="brand-logo-img" />
-      </div>
-      <div class="brand-info">
-        <span class="brand-name">MannMitra</span>
-        <span class="brand-status">
-          <span class="status-dot"></span>
-          Always here for you
-        </span>
-      </div>
-    </div>
-    <button id="orb-toggle-btn" class="orb-toggle-btn" title="Switch to voice mode">
-      <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-        <line x1="12" y1="19" x2="12" y2="23"/>
-        <line x1="8" y1="23" x2="16" y2="23"/>
-      </svg>
-      Voice Mode
-    </button>
-  </header>
-
-  <!-- Crisis Banner -->
-  <div id="crisis-banner" class="crisis-banner hidden">
-    <div class="crisis-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-    </div>
-    <div class="crisis-content">
-      <p><strong>It sounds like things are really hard right now.</strong> You don't have to handle this alone.</p>
-      <div id="helpline-list" class="helpline-list"></div>
-    </div>
-  </div>
-
-  <!-- Chat Window -->
-  <div id="chat-window" class="chat-window">
-    <div class="message bot">
-      <div class="message-avatar">
-        <img src="assets/mannmitra-icon.png" alt="MannMitra" class="bot-logo-img" />
-      </div>
-      <div class="message-bubble">
-        <p>Hi, I'm MannMitra. This is a private space, no one else can see what you share here. What's on your mind today?</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Input Area -->
-  <div class="input-area">
-    <div class="input-container">
-      <button id="mic-btn" class="mic-btn" title="Speak instead of typing (Text response only)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-          <line x1="12" y1="19" x2="12" y2="23"/>
-          <line x1="8" y1="23" x2="16" y2="23"/>
-        </svg>
-      </button>
-      <input id="text-input" type="text" placeholder="Share what's on your mind..." />
-      <button id="send-btn" class="send-btn" title="Send message">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="22" y1="2" x2="11" y2="13"/>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
     </div>
-    <p class="disclaimer">MannMitra does not diagnose and is not a substitute for professional counselling. In an emergency, please contact the LPU Division of Happiness and Wellbeing or a helpline directly.</p>
-  </div>
 
-  <!-- Global Bottom Navigation Bar (Chat View) -->
-  <nav class="bottom-nav">
-    <button id="nav-dash-btn-chat" class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
-      <span>Home</span>
-    </button>
-    <button id="nav-chat-btn-chat" class="nav-item active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
-      <span>Chat</span>
-    </button>
-    <button class="nav-item disabled" title="Wellbeing Tracker - Coming Soon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-      </svg>
-      <span>Wellbeing</span>
-    </button>
-    <button id="nav-resources-btn-chat" class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-      </svg>
-      <span>Resources</span>
-    </button>
-  </nav>
-</div>
-
-<!-- Step 3: Redesigned Voice Orb Mode (Abstract Sphere - NO LOGO INSIDE) -->
-<div id="orb-overlay" class="orb-overlay hidden">
-  <div class="orb-top-bar">
-    <div class="orb-mode-badge">
-      <span class="orb-mode-dot"></span>
-      Voice Mode
-    </div>
-    <button id="orb-close-btn" class="orb-close-btn" title="Exit voice mode">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"/>
-        <line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </button>
-  </div>
-
-  <div id="orb-center-container" class="orb-center-container">
-    <!-- Concentric Ripple Rings — sonar when listening/speaking -->
-    <div class="orb-rings-container">
-      <div class="orb-ring ring-1"></div>
-      <div class="orb-ring ring-2"></div>
-      <div class="orb-ring ring-3"></div>
-    </div>
-
-    <!-- Pure Abstract Glowing Sphere (NO LOGO INSIDE) -->
-    <div id="orb-circle" class="orb-circle idle" title="Tap orb to speak">
-      <div class="orb-inner-glow"></div>
-    </div>
-
-    <!-- Animated Waveform Audio Visualization -->
-    <div id="orb-waveform" class="orb-waveform idle">
-      <span class="wave-bar"></span>
-      <span class="wave-bar"></span>
-      <span class="wave-bar"></span>
-      <span class="wave-bar"></span>
-      <span class="wave-bar"></span>
-    </div>
-  </div>
-
-  <div class="orb-info-container">
-    <p id="orb-status" class="orb-status">Tap to talk</p>
-    <p id="orb-caption" class="orb-caption">Speak freely, I'm here for you.</p>
-  </div>
-
-  <div class="orb-bottom-controls">
-    <button id="orb-stop-btn" class="orb-stop-btn">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <rect x="6" y="6" width="12" height="12" rx="2" />
-      </svg>
-      End Conversation
-    </button>
-  </div>
-</div>
-
-<!-- Guided Breathing Overlay — Premium Brand -->
-<div id="breathing-overlay" class="breathing-overlay hidden">
-  <div class="breathing-particles" aria-hidden="true">
-    <span class="breathing-particle p1"></span>
-    <span class="breathing-particle p2"></span>
-    <span class="breathing-particle p3"></span>
-    <span class="breathing-particle p4"></span>
-  </div>
-
-  <div class="breathing-top-bar">
-    <button id="breathing-close-btn" class="breathing-close-btn" title="Exit breathing exercise">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"/>
-        <line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </button>
-  </div>
-
-  <div class="breathing-center-container">
-    <div class="breathing-ring-wrap">
-      <svg class="breathing-progress-svg" viewBox="0 0 236 236" aria-hidden="true">
-        <defs>
-          <linearGradient id="breathingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#FF8FAB"/>
-            <stop offset="55%" stop-color="#E07BE0"/>
-            <stop offset="100%" stop-color="#9B5DE5"/>
-          </linearGradient>
-        </defs>
-        <circle class="breathing-progress-track" cx="118" cy="118" r="108"/>
-        <circle id="breathing-progress-ring" class="breathing-progress-ring" cx="118" cy="118" r="108"/>
-      </svg>
-      <div id="breathing-circle" class="breathing-circle"></div>
-    </div>
-    <p id="breathing-status" class="breathing-status">Breathe in...</p>
-  </div>
-
-  <div class="breathing-info-container">
-    <p class="breathing-instruction">Follow the circle. In for 4, hold for 4, out for 4, hold for 4.</p>
-  </div>
-</div>
-
-<!-- Resources View -->
-<div id="resources-view" class="resources-view hidden">
-  <header class="app-header">
-    <div class="brand">
-      <div class="brand-avatar">
-        <img src="assets/mannmitra-icon.png" alt="MannMitra" class="brand-logo-img" />
+    <div class="breathing-center-container">
+      <div class="breathing-ring-wrap">
+        <svg class="breathing-progress-svg" viewBox="0 0 236 236" aria-hidden="true">
+          <defs>
+            <linearGradient id="breathingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FF8FAB" />
+              <stop offset="55%" stop-color="#E07BE0" />
+              <stop offset="100%" stop-color="#9B5DE5" />
+            </linearGradient>
+          </defs>
+          <circle class="breathing-progress-track" cx="118" cy="118" r="108" />
+          <circle id="breathing-progress-ring" class="breathing-progress-ring" cx="118" cy="118" r="108" />
+        </svg>
+        <div id="breathing-circle" class="breathing-circle"></div>
       </div>
-      <div class="brand-info">
-        <span class="brand-name">MannMitra</span>
-        <span class="brand-status">
-          <span class="status-dot"></span>
-          Always here for you
-        </span>
-      </div>
+      <p id="breathing-status" class="breathing-status">Breathe in...</p>
     </div>
-  </header>
 
-  <div class="resources-body">
-    <h2 class="resources-title">Verified Campus Resources</h2>
-    <div id="resources-list" class="resources-list"></div>
+    <div class="breathing-info-container">
+      <p class="breathing-instruction">Follow the circle. In for 4, hold for 4, out for 4, hold for 4.</p>
+    </div>
   </div>
 
-  <nav class="bottom-nav">
-    <button id="nav-dash-btn-resources" class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
-      <span>Home</span>
-    </button>
-    <button id="nav-chat-btn-resources" class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
-      <span>Chat</span>
-    </button>
-    <button class="nav-item disabled" title="Wellbeing Tracker - Coming Soon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-      </svg>
-      <span>Wellbeing</span>
-    </button>
-    <button id="nav-resources-btn-resources" class="nav-item active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-      </svg>
-      <span>Resources</span>
-    </button>
-  </nav>
-</div>
+  <!-- Backwards compatibility hidden anchors -->
+  <div id="dashboard" class="hidden"></div>
+  <div id="resources-view" class="hidden"><div id="resources-list" class="hidden"></div></div>
+  <div id="activities-view" class="hidden"></div>
+  <button id="action-chat-btn" class="hidden"></button>
+  <button id="action-voice-btn" class="hidden"></button>
+  <button id="orb-toggle-btn" class="hidden"></button>
+  <button id="nav-dash-btn" class="hidden"></button>
+  <button id="nav-dash-btn-chat" class="hidden"></button>
+  <button id="nav-chat-btn-chat" class="hidden"></button>
+  <button id="nav-dash-btn-resources" class="hidden"></button>
+  <button id="nav-chat-btn-resources" class="hidden"></button>
+  <button id="nav-resources-btn-chat" class="hidden"></button>
+  <button id="nav-resources-btn-resources" class="hidden"></button>
+  <button id="resources-back-to-chat-btn" class="hidden"></button>
 
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
+
 </html>
