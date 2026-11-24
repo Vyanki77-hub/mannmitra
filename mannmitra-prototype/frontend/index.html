@@ -12,6 +12,7 @@
 
   <!-- ==================== VIEW 1: LOGIN / WELCOME SCREEN ==================== -->
   <div id="login-view" class="login-view">
+    <div class="login-backdrop-blur-layer"></div>
     <div class="login-backdrop-glow"></div>
     <div id="welcome-screen" class="login-card">
       <div class="login-brand-header">
@@ -24,6 +25,14 @@
       </div>
 
       <form id="login-form" class="login-form" onsubmit="event.preventDefault();">
+        <div id="login-error-banner" class="login-error-banner hidden" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="login-error-text">Please enter your Student ID or Email.</span>
+        </div>
         <div class="form-group">
           <label for="login-email">Student ID / Email</label>
           <div class="input-with-icon">
@@ -65,7 +74,7 @@
 
         <div class="login-actions">
           <button type="button" id="start-chat-btn" class="btn-primary-gradient login-submit-btn">
-            <span>Sign In to Sanctuary</span>
+            <span id="login-btn-text">Sign In to Sanctuary</span><span id="login-spinner" class="login-spinner hidden"></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
@@ -106,10 +115,17 @@
           <span class="pulse-dot"></span>
           <span>Warm Welcome</span>
         </div>
-        <h2 id="greeting-heading" class="greeting-modal-title">Hello Vyankatesh, how are you feeling today?</h2>
+        <h2 id="greeting-heading" class="greeting-modal-title">Hello, Vyankatesh! How are you today?</h2>
         <p id="greeting-subtitle" class="greeting-modal-subtitle">Take a moment for yourself. I'm here to listen.</p>
 
         <div class="greeting-modal-actions">
+          <button type="button" id="hear-greeting-btn" class="btn-ghost-secondary hear-greeting-btn" title="Hear Greeting">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <span>Hear Greeting</span>
+          </button>
           <button id="greeting-continue-btn" class="btn-primary-gradient greeting-continue-btn">
             <span>Enter My Sanctuary</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -126,288 +142,380 @@
 
   <!-- ==================== VIEW 3: DESKTOP WELLNESS DASHBOARD ==================== -->
   <div id="desktop-dashboard" class="desktop-dashboard hidden">
-    
-    <!-- LEFT SIDEBAR (~260px) -->
-    <aside class="dashboard-sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-avatar-box">
-          <img src="assets/mannmitra-icon.png" alt="MannMitra Logo" class="sidebar-brand-img" />
+    <div class="dashboard-body-grid">
+
+      <!-- UNIFIED LEFT SIDEBAR -->
+      <aside class="dashboard-sidebar">
+        <!-- Brand Lockup at Top of Sidebar -->
+        <div class="header-brand-capsule">
+          <div class="brand-avatar-box">
+            <img src="assets/mannmitra-icon.png" alt="MannMitra Logo" class="sidebar-brand-img" />
+          </div>
+          <div class="brand-title-box">
+            <span class="brand-title-text">MannMitra</span>
+            <span class="brand-sub-badge">Always here for you</span>
+          </div>
         </div>
-        <div class="brand-title-box">
-          <span class="brand-title-text">MannMitra</span>
-          <span class="brand-sub-badge">AI Wellbeing Friend</span>
-        </div>
-      </div>
 
-      <nav class="sidebar-nav">
-        <!-- 1. Chat with MM -->
-        <button id="nav-chat-btn" class="sidebar-nav-item active" data-view="chat">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <span>Chat with MM</span>
-        </button>
+        <nav class="sidebar-nav">
+          <!-- 1. Chat with MM -->
+          <button id="nav-chat-btn" class="sidebar-nav-item active" data-view="chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Chat with MM</span>
+          </button>
 
-        <!-- 2. My Wellbeing -->
-        <button id="nav-wellbeing-btn" class="sidebar-nav-item" data-view="wellbeing">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-          <span>My Wellbeing</span>
-        </button>
+          <!-- 2. My Wellbeing -->
+          <button id="nav-wellbeing-btn" class="sidebar-nav-item" data-view="wellbeing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span>My Wellbeing</span>
+          </button>
 
-        <!-- 3. Mood Tracker -->
-        <button id="nav-mood-btn" class="sidebar-nav-item" data-view="mood-tracker">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-            <line x1="9" y1="9" x2="9.01" y2="9"></line>
-            <line x1="15" y1="9" x2="15.01" y2="9"></line>
-          </svg>
-          <span>Mood Tracker</span>
-        </button>
+          <!-- 3. Mood Tracker -->
+          <button id="nav-mood-btn" class="sidebar-nav-item" data-view="mood-tracker">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"></path>
+              <path d="M7 14l4-4 4 3 5-6"></path>
+            </svg>
+            <span>Mood Tracker</span>
+          </button>
 
-        <!-- 4. Relax & Breathe -->
-        <button id="nav-breathing-btn" class="sidebar-nav-item" data-view="relax-breathe">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M8 12h8"></path>
-            <path d="M12 8v8"></path>
-          </svg>
-          <span>Relax & Breathe</span>
-          <span class="nav-pill-badge">Calm</span>
-        </button>
+          <!-- 4. Relax & Breathe -->
+          <button id="nav-breathing-btn" class="sidebar-nav-item" data-view="relax-breathe">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3c-2.5 3.5-3.5 6.5-3.5 9a3.5 3.5 0 0 0 7 0c0-2.5-1-5.5-3.5-9z"></path>
+              <path d="M5 12c2.5 0 4.5 1.5 5.5 4-2.5.5-5-.5-5.5-4z"></path>
+              <path d="M19 12c-2.5 0-4.5 1.5-5.5 4 2.5.5 5-.5 5.5-4z"></path>
+            </svg>
+            <span>Relax & Breathe</span>
+          </button>
 
-        <!-- 5. Guided Support -->
-        <button id="nav-support-btn" class="sidebar-nav-item" data-view="guided-support">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
-          <span>Guided Support</span>
-        </button>
+          <!-- 5. Guided Support -->
+          <button id="nav-support-btn" class="sidebar-nav-item" data-view="guided-support">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+            <span>Guided Support</span>
+          </button>
 
-        <!-- 6. College Help (LPU) -->
-        <button id="nav-lpu-btn" class="sidebar-nav-item" data-view="college-help">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-          </svg>
-          <span>College Help (LPU)</span>
-        </button>
+          <!-- 6. College Help (LPU) -->
+          <button id="nav-lpu-btn" class="sidebar-nav-item" data-view="college-help">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+            <span>College Help (LPU)</span>
+          </button>
 
-        <!-- 7. Resources Library -->
-        <button id="nav-resources-btn" class="sidebar-nav-item" data-view="resources-library">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-          </svg>
-          <span>Resources</span>
-        </button>
+          <!-- 7. Resources Library -->
+          <button id="nav-resources-btn" class="sidebar-nav-item" data-view="resources-library">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span>Resources</span>
+          </button>
 
-        <!-- 8. My Journey -->
-        <button id="nav-journey-btn" class="sidebar-nav-item" data-view="my-journey">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-          </svg>
-          <span>My Journey</span>
-        </button>
+          <!-- 8. My Journey -->
+          <button id="nav-journey-btn" class="sidebar-nav-item" data-view="my-journey">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+              <path d="M4 22h16"></path>
+              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+              <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path>
+            </svg>
+            <span>My Journey</span>
+          </button>
 
-        <!-- 9. Settings -->
-        <button id="nav-settings-btn" class="sidebar-nav-item" data-view="settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
-          <span>Settings</span>
-        </button>
-      </nav>
+          <!-- 9. Settings -->
+          <button id="nav-settings-btn" class="sidebar-nav-item" data-view="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Settings</span>
+          </button>
+        </nav>
 
-      <!-- Sidebar User Profile Footer -->
-      <div class="sidebar-user-footer">
-        <div class="sidebar-user-avatar">
+        <!-- Retained for JS compatibility -->
+        <div class="sidebar-user-footer hidden">
           <span id="sidebar-user-initial">V</span>
-          <span class="user-status-dot online"></span>
+          <span id="sidebar-display-name">Vyankatesh</span>
+          <span id="sidebar-user-role">LPU Student</span>
         </div>
-        <div class="sidebar-user-info">
-          <span id="sidebar-display-name" class="sidebar-user-name">Vyankatesh</span>
-          <span id="sidebar-user-role" class="sidebar-user-role">LPU Student • Sanctuary</span>
-        </div>
-      </div>
-    </aside>
 
-    <!-- CENTER MAIN WORKSPACE -->
-    <main class="dashboard-main">
-      
-      <!-- TOP HEADER BAR -->
-      <header class="main-top-header">
-        <div class="header-left-group">
+        <!-- Pastel Pink Quote Card inside Sidebar -->
+        <div class="floating-desk-quote">
+          <span class="quote-crown" aria-hidden="true">👑</span>
+          <p class="quote-text">"You are stronger than you think."</p>
+          <span class="quote-heart" aria-hidden="true">💗</span>
+        </div>
+      </aside>
+
+      <!-- MAIN RIGHT COLUMN (HEADER + WORKSPACE) -->
+      <div class="dashboard-content-column">
+
+        <!-- TOP FLOATING HEADER BAR -->
+        <header class="main-top-header">
+          <!-- Center: Floating Search Pill -->
           <div class="search-container">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input type="text" id="dashboard-search-input" placeholder="Search your thoughts, tips, guides..." />
+            <input type="text" id="dashboard-search-input" placeholder="Ask anything... about your feelings, college life, studies or just chat" />
           </div>
-          <span id="current-view-title" class="header-view-badge">Chat with MM</span>
-        </div>
 
-        <div class="header-right-actions">
-          <button id="dash-voice-btn" class="header-action-btn voice-btn" title="Open Voice Orb Mode">
-            <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-              <line x1="12" y1="19" x2="12" y2="23"></line>
-              <line x1="8" y1="23" x2="16" y2="23"></line>
-            </svg>
-            <span>Voice Orb</span>
-          </button>
+          <!-- Right: Actions & User Profile -->
+          <div class="header-right-actions">
+            <!-- Retained for JS compatibility -->
+            <button id="dash-voice-btn" class="header-action-btn voice-btn hidden" title="Open Voice Orb Mode">
+              <span>Voice Orb</span>
+            </button>
+            <span id="current-view-title" class="header-view-badge hidden">Chat with MM</span>
 
-          <button id="header-notification-btn" class="header-icon-btn notification-btn" title="Notifications">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-            <span class="notification-badge"></span>
-          </button>
+            <button id="header-notification-btn" class="header-circle-btn" title="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </button>
 
-          <div class="header-user-badge">
-            <div id="header-user-initial" class="header-avatar">V</div>
-            <div class="header-user-meta">
-              <span id="header-user-name" class="user-greeting-name">Vyankatesh</span>
-              <span class="user-affirmation-text">You're doing great! 🌸</span>
+            <div class="header-profile-wrap">
+              <div class="header-profile-pill" id="header-profile-pill" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false" title="User Profile">
+                <div id="header-user-initial" class="header-user-avatar-circle">
+                <svg viewBox="0 0 40 40" class="boy-avatar-svg" fill="none">
+                  <circle cx="20" cy="20" r="20" fill="#FFEDD5"/>
+                  <circle cx="20" cy="19" r="11" fill="#FDBA74"/>
+                  <path d="M12 16C12 11 15 8 20 8C25 8 28 11 28 16C28 16.5 27 15 25 15C22 15 21 16 20 16C19 16 18 15 15 15C13 15 12 16.5 12 16Z" fill="#78350F"/>
+                  <path d="M12 16C11 18 11 21 12 22C12.5 20 13 19 14 19" stroke="#78350F" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M28 16C29 18 29 21 28 22C27.5 20 27 19 26 19" stroke="#78350F" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle cx="16.5" cy="18.5" r="1.5" fill="#431407"/>
+                  <circle cx="23.5" cy="18.5" r="1.5" fill="#431407"/>
+                  <path d="M17.5 22.5C18.5 24 21.5 24 22.5 22.5" stroke="#C2410C" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M13 36C13 30 16 28 20 28C24 28 27 30 27 36" fill="#F97316"/>
+                  <path d="M18 28L20 31L22 28" stroke="#FFEDD5" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="header-user-meta">
+                <span id="header-user-name" class="user-greeting-name">Hi, Vyankatesh</span>
+                <span class="user-affirmation-text">You're doing great! ☀️</span>
+              </div>
+              <svg class="header-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+
+            <!-- Profile Dropdown -->
+            <div id="header-profile-dropdown" class="header-profile-dropdown hidden">
+              <div class="profile-dropdown-header">
+                <div class="profile-dropdown-avatar">
+                  <span id="profile-dropdown-initial">V</span>
+                </div>
+                <div class="profile-dropdown-meta">
+                  <strong id="profile-dropdown-name">Vyankatesh</strong>
+                  <small id="profile-dropdown-role">Student (LPU Sanctuary)</small>
+                </div>
+              </div>
+              <div class="profile-dropdown-divider"></div>
+              <button type="button" id="profile-view-settings-btn" class="profile-dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Sanctuary Preferences</span>
+              </button>
+              <button type="button" id="profile-logout-btn" class="profile-dropdown-item danger-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Sign Out</span>
+              </button>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <!-- MAIN CONTENT AREA — 9 DEDICATED VIEWS -->
+        <!-- DASHBOARD WORKSPACE CANVAS -->
+        <div class="dashboard-workspace">
+
+    <!-- CENTER MAIN WORKSPACE -->
+    <main class="dashboard-main">
       <section class="main-content-area">
         
         <!-- ==================== VIEW 1: CHAT WITH MM ==================== -->
         <div id="app" class="main-view active chat-main-container">
-          <!-- Tab Bar Navigation inside Chat -->
-          <div class="center-tab-bar">
-            <button id="tab-chat-btn" class="tab-btn active" data-tab="chat">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span>Chat</span>
-            </button>
 
-            <button id="tab-voice-btn" class="tab-btn" data-tab="voice">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                <line x1="12" y1="19" x2="12" y2="23"></line>
-                <line x1="8" y1="23" x2="16" y2="23"></line>
-              </svg>
-              <span>Voice Mode</span>
-            </button>
-
-            <button id="tab-activities-btn" class="tab-btn" data-tab="activities">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-              </svg>
-              <span>Activities</span>
-            </button>
-
-            <button id="tab-journal-btn" class="tab-btn" data-tab="journal">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-              </svg>
-              <span>Journal</span>
-            </button>
-          </div>
-
-          <!-- CRISIS BANNER -->
-          <div id="crisis-banner" class="crisis-banner hidden">
-            <div class="crisis-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              </svg>
-            </div>
-            <div class="crisis-content">
-              <p><strong>It sounds like things are really hard right now.</strong> You don't have to carry this alone. Immediate, confidential support is available 24/7:</p>
-              <div id="helpline-list" class="helpline-list"></div>
-            </div>
-          </div>
-
-          <!-- CHAT STREAM WINDOW -->
-          <div id="chat-window" class="chat-window">
-            <!-- Companion Welcome Banner Card -->
-            <div class="chat-welcome-hero-card">
-              <div class="companion-avatar-wrap">
-                <img src="assets/mannmitra-icon.png" alt="MannMitra" class="hero-companion-img" />
-              </div>
-              <div class="hero-welcome-text">
-                <h3 id="chat-hero-greeting">Welcome! I'm MannMitra 🌸</h3>
-                <p>This is a safe, supportive space to reflect. Whatever is on your mind—studies, stress, relationships, or just a heavy day—I'm here to listen without judgment.</p>
-              </div>
-            </div>
-
-            <!-- Quick Suggestion Prompt Chips -->
-            <div class="quick-prompts-container">
-              <span class="prompts-label">Suggested reflections:</span>
-              <div class="prompts-grid">
-                <button class="prompt-chip" data-prompt="Bhai ekdum dimaag ka dahi ho chuka hai assignments aur exams se.">
-                  <span>📚 Assignment & Exam Pressure</span>
-                </button>
-                <button class="prompt-chip" data-prompt="I'm feeling very overwhelmed right now. Can you help me calm down?">
-                  <span>🌿 Help Me Calm Down</span>
-                </button>
-                <button class="prompt-chip" data-prompt="Hostel mein akela lag raha hai, sab apne kaam mein busy hain.">
-                  <span>🏠 Hostel Loneliness</span>
-                </button>
-                <button class="prompt-chip" data-prompt="Can we do a quick 2-minute breathing exercise together?">
-                  <span>💨 Guided Breathing</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Initial Bot Message -->
-            <div class="message bot">
-              <div class="message-avatar">
-                <img src="assets/mannmitra-icon.png" alt="MannMitra" class="bot-logo-img" />
-              </div>
-              <div class="message-bubble">
-                <p id="chat-initial-message">Hi Vyankatesh. Take your time, there is no rush here. What's on your mind today?</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- INPUT COMPOSER AREA -->
-          <div class="input-area">
-            <div class="input-container">
-              <button type="button" id="chat-prompt-assist-btn" class="attachment-btn" title="Add a prompt topic">
+          <!-- Floating Center Chat Card -->
+          <div class="floating-chat-card">
+            <!-- Top Tab Bar -->
+            <div class="center-tab-bar">
+              <button id="tab-chat-btn" class="tab-btn active" data-tab="chat">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
+                <span>Chat</span>
               </button>
-              
-              <input id="text-input" type="text" placeholder="Share what's on your mind... I'm here to listen" />
-              
-              <button id="mic-btn" class="mic-btn" title="Speak instead of typing (Speech-to-Text)">
+              <span class="tab-divider">|</span>
+              <button id="tab-voice-btn" class="tab-btn" data-tab="voice">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
                   <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
                   <line x1="12" y1="19" x2="12" y2="23"></line>
                   <line x1="8" y1="23" x2="16" y2="23"></line>
                 </svg>
+                <span>Voice</span>
               </button>
-
-              <button id="send-btn" class="send-btn" title="Send message">
+              <span class="tab-divider">|</span>
+              <button id="tab-activities-btn" class="tab-btn" data-tab="activities">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                 </svg>
+                <span>Activities</span>
+              </button>
+              <span class="tab-divider">|</span>
+              <button id="tab-journal-btn" class="tab-btn" data-tab="journal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span>Journal</span>
               </button>
             </div>
 
-            <p class="disclaimer">
-              MannMitra offers supportive, empathetic AI conversation and does not replace professional therapy. In an emergency, please contact LPU counseling services or call 112 / 1800-891-4416.
-            </p>
+            <!-- Crisis Banner -->
+            <div id="crisis-banner" class="crisis-banner hidden">
+              <div class="crisis-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="crisis-content">
+                <p><strong>It sounds like things are really hard right now.</strong> You don't have to carry this alone. Immediate, confidential support is available 24/7:</p>
+                <div id="helpline-list" class="helpline-list"></div>
+              </div>
+            </div>
+
+            <!-- Chat Stream Messages Scroll Area -->
+            <div id="chat-window" class="chat-window">
+              <div class="chat-welcome-hero-card hidden">
+                <h3 id="chat-hero-greeting">Welcome! I'm MannMitra 👋</h3>
+              </div>
+
+              <!-- Message 1 (Bot) -->
+              <div class="message bot">
+                <div class="message-avatar">
+                  <img src="assets/mannmitra-icon.png" alt="MannMitra" class="bot-logo-img" />
+                </div>
+                <div class="message-bubble-wrapper">
+                  <div class="message-bubble">
+                    <p id="chat-initial-message">Hey! I'm here. What's on your mind today?</p>
+                  </div>
+                  <div class="message-meta-flex">
+                    <span class="message-timestamp">11:12 AM</span>
+                    <button type="button" id="chat-hear-greeting-btn" class="chat-audio-btn" title="Hear Greeting">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Message 2 (User) -->
+              <div class="message user">
+                <div class="message-bubble-wrapper right">
+                  <div class="message-bubble user-bubble-gradient">
+                    <p>I'm feeling a bit stressed about my exams and future 😟</p>
+                  </div>
+                  <span class="message-timestamp">11:13 AM</span>
+                </div>
+                <div class="message-avatar user-chat-avatar">
+                  <svg viewBox="0 0 40 40" class="boy-avatar-svg" fill="none">
+                    <circle cx="20" cy="20" r="20" fill="#FFEDD5"/>
+                    <circle cx="20" cy="19" r="11" fill="#FDBA74"/>
+                    <path d="M12 16C12 11 15 8 20 8C25 8 28 11 28 16C28 16.5 27 15 25 15C22 15 21 16 20 16C19 16 18 15 15 15C13 15 12 16.5 12 16Z" fill="#78350F"/>
+                    <circle cx="16.5" cy="18.5" r="1.5" fill="#431407"/>
+                    <circle cx="23.5" cy="18.5" r="1.5" fill="#431407"/>
+                    <path d="M17.5 22.5C18.5 24 21.5 24 22.5 22.5" stroke="#C2410C" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M13 36C13 30 16 28 20 28C24 28 27 30 27 36" fill="#F97316"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Message 3 (Bot) -->
+              <div class="message bot">
+                <div class="message-avatar">
+                  <img src="assets/mannmitra-icon.png" alt="MannMitra" class="bot-logo-img" />
+                </div>
+                <div class="message-bubble-wrapper">
+                  <div class="message-bubble">
+                    <p>I understand, exams and the future can feel overwhelming. You're not alone in this. 💜<br><br>
+                    Would you like to:<br>
+                    • Talk more about what's stressing you?<br>
+                    • Try a quick breathing exercise?<br>
+                    • Get a personalised study & wellbeing plan?<br><br>
+                    Whatever you choose, I'm here with you. 🌟</p>
+                  </div>
+                  <span class="message-timestamp">11:13 AM</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Centered Quick Action Pills -->
+            <div class="quick-action-pills-row">
+              <button class="chat-action-pill" data-prompt="Let's talk more about what's stressing me.">💬 Let's Talk</button>
+              <button class="chat-action-pill" data-action="breathe">🌿 Breathe with Me</button>
+              <button class="chat-action-pill" data-prompt="Can you give me a personalized study & wellbeing plan•">📋 Study Plan</button>
+              <button class="chat-action-pill" data-prompt="Let's just chat for a while.">😊 Just Chat</button>
+            </div>
+
+            <!-- Input Composer Area -->
+            <div class="input-area">
+              <div class="input-container">
+                <button type="button" id="chat-prompt-assist-btn" class="attachment-btn" title="Add a prompt topic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                  </svg>
+                </button>
+                
+                <input id="text-input" type="text" placeholder="Share what's on your mind..." />
+                
+                <button id="mic-btn" class="mic-btn" title="Voice Input">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                  </svg>
+                </button>
+
+                <button id="send-btn" class="send-btn" title="Send message">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Bottom Suggested Prompt Tags -->
+              <div class="bottom-prompts-tags-row">
+                <button class="prompt-chip" data-prompt="I feel anxious"><span class="tag-dot purple"></span> I feel anxious</button>
+                <button class="prompt-chip" data-prompt="I'm feeling low"><span class="tag-dot red"></span> I'm feeling low</button>
+                <button class="prompt-chip" data-prompt="Help me focus"><span class="tag-icon">🎯</span> Help me focus</button>
+                <button class="prompt-chip" data-prompt="Motivate me"><span class="tag-icon">🌟</span> Motivate me</button>
+                <button class="prompt-chip" data-prompt="College info"><span class="tag-icon">🎓</span> College info</button>
+                <button class="prompt-chip" data-prompt="Fun chat"><span class="tag-icon">😄</span> Fun chat</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -427,12 +535,12 @@
             <div class="page-card">
               <div class="card-header-flex">
                 <h3 class="card-subtitle-bold">1. Today's Check-in</h3>
-                <span class="status-pill-green">Active Today</span>
+                <span id="wellbeing-checkin-status" class="status-pill-muted">Not Yet Checked In</span>
               </div>
-              <p class="card-body-text">Taking a moment to pause is a powerful act of self-care. You have checked in today.</p>
+              <p class="card-body-text" id="wellbeing-checkin-desc">Taking a moment to pause is a powerful act of self-care.</p>
               <div class="checkin-stat-badge">
-                <span class="stat-number">3</span>
-                <span class="stat-label">Check-ins this week</span>
+                <span class="stat-number" id="wellbeing-checkin-count">0</span>
+                <span class="stat-label" id="wellbeing-checkin-label">Check-ins this session</span>
               </div>
             </div>
 
@@ -440,7 +548,7 @@
             <div class="page-card">
               <div class="card-header-flex">
                 <h3 class="card-subtitle-bold">2. Current Mood</h3>
-                <span id="wellbeing-current-mood-tag" class="status-pill-purple">Good 😊</span>
+                <span id="wellbeing-current-mood-tag" class="status-pill-muted">Not logged yet</span>
               </div>
               <p class="card-body-text">Your feelings are valid. Honor where you are right now without judgment.</p>
               <button id="wellbeing-log-mood-btn" class="btn-outline-pill small-btn">Update Mood</button>
@@ -473,6 +581,7 @@
                 <p>No saved reflections yet today.</p>
                 <small>Conversations and journal entries will appear here as gentle highlights.</small>
               </div>
+              <div id="wellbeing-reflections-list" class="reflections-history-list hidden"></div>
             </div>
 
             <!-- 5. Suggested Activities -->
@@ -507,7 +616,7 @@
             <div class="page-card">
               <h3 class="card-subtitle-bold">6. Weekly Snapshot</h3>
               <p class="card-body-text">Summary of your consistency over the last 7 days:</p>
-              <div class="weekly-dot-tracker">
+              <div class="weekly-dot-tracker" id="wellbeing-weekly-dots">
                 <div class="day-dot-item"><span class="dot done"></span><small>Mon</small></div>
                 <div class="day-dot-item"><span class="dot done"></span><small>Tue</small></div>
                 <div class="day-dot-item"><span class="dot done"></span><small>Wed</small></div>
@@ -542,7 +651,7 @@
           <div class="mood-tracker-container">
             <!-- Mood Entry Section -->
             <div class="page-card">
-              <h3 class="card-subtitle-bold">How are you feeling right now?</h3>
+              <h3 class="card-subtitle-bold">How are you feeling right now•</h3>
               <div class="mood-grid-large">
                 <button class="mood-select-btn" data-mood="Terrible">
                   <span class="mood-emoji-lg">😭</span>
@@ -567,7 +676,7 @@
               </div>
 
               <div class="mood-note-box">
-                <label for="mood-note-input">Optional Note (What's contributing to this feeling?):</label>
+                <label for="mood-note-input">Optional Note (What's contributing to this feeling•):</label>
                 <textarea id="mood-note-input" rows="2" placeholder="e.g., Felt overwhelmed by external examiners, took a deep breath..."></textarea>
                 <div class="mood-action-row">
                   <button id="save-mood-entry-btn" class="btn-primary-gradient small-btn">Save Mood Entry</button>
@@ -602,33 +711,9 @@
 
               <!-- Distribution & History -->
               <div class="page-card">
-                <h3 class="card-subtitle-bold">Mood Distribution (Past 14 Days)</h3>
-                <div class="distribution-bars">
-                  <div class="dist-row">
-                    <span>🌟 Great</span>
-                    <div class="bar-track"><div class="bar-fill great" style="width: 25%;"></div></div>
-                    <span>25%</span>
-                  </div>
-                  <div class="dist-row">
-                    <span>😊 Good</span>
-                    <div class="bar-track"><div class="bar-fill good" style="width: 35%;"></div></div>
-                    <span>35%</span>
-                  </div>
-                  <div class="dist-row">
-                    <span>😐 Okay</span>
-                    <div class="bar-track"><div class="bar-fill okay" style="width: 20%;"></div></div>
-                    <span>20%</span>
-                  </div>
-                  <div class="dist-row">
-                    <span>😔 Sad</span>
-                    <div class="bar-track"><div class="bar-fill sad" style="width: 15%;"></div></div>
-                    <span>15%</span>
-                  </div>
-                  <div class="dist-row">
-                    <span>😭 Terrible</span>
-                    <div class="bar-track"><div class="bar-fill terrible" style="width: 5%;"></div></div>
-                    <span>5%</span>
-                  </div>
+                <h3 class="card-subtitle-bold">Mood Distribution (Session)</h3>
+                <div class="distribution-bars" id="mood-distribution-bars">
+                  <!-- Populated dynamically via JS -->
                 </div>
 
                 <div class="recent-history-section">
@@ -727,7 +812,7 @@
             <div id="breathe-completion-card" class="page-card completion-card hidden">
               <span class="completion-star">✨</span>
               <h3>Session Completed</h3>
-              <p>Well done for honoring this time for yourself. How does your body feel right now?</p>
+              <p>Well done for honoring this time for yourself. How does your body feel right now•</p>
               <div class="completion-actions">
                 <button class="btn-outline-pill to-chat-reflect-btn" data-msg="I just finished a breathing exercise and feel a bit more relaxed.">Talk with MM about how you feel</button>
               </div>
@@ -825,27 +910,41 @@
           </div>
 
           <!-- Active Journey Modal / Runner -->
-          <div id="active-journey-runner" class="page-card active-journey-card hidden">
+          <div id="active-journey-runner" class="page-card active-journey-card hidden" role="region" aria-label="Guided Pathway Session">
             <div class="journey-runner-header">
               <span id="runner-journey-title" class="runner-title">Exam & Assignment Pressure</span>
               <span id="runner-step-counter" class="runner-counter">Step 1 of 4</span>
-              <button id="exit-journey-btn" class="exit-btn" title="Exit Journey">✕</button>
+              <button id="exit-journey-btn" class="exit-btn" title="Exit Journey" aria-label="Exit pathway">✕</button>
             </div>
             
-            <div class="runner-progress-bar">
+            <div class="runner-progress-bar" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" aria-label="Pathway progress">
               <div id="runner-progress-fill" class="runner-progress-fill" style="width: 25%;"></div>
             </div>
 
-            <div class="runner-body">
+            <div id="runner-step-body" class="runner-body">
               <h3 id="runner-step-heading">Acknowledge the Weight</h3>
               <p id="runner-step-content">It is completely normal to feel frozen when assignments and exams collide. You don't have to tackle the whole semester in one sitting.</p>
               
               <div id="runner-interaction-area" class="runner-interaction-area">
-                <!-- Dynamic prompts / questions injected via JS -->
+                <label for="journey-step-input" id="journey-step-prompt" style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;"></label>
+                <textarea id="journey-step-input" rows="3" placeholder="Type your gentle thoughts here... (saved automatically in this session)"></textarea>
               </div>
             </div>
 
-            <div class="runner-footer-nav">
+            <!-- Completion View (shown when pathway is completed) -->
+            <div id="runner-completion-body" class="journey-completion-content hidden">
+              <div class="completion-celebration">
+                <span class="celebration-icon">✨</span>
+                <h3 id="runner-completion-title">Pathway Completed!</h3>
+                <p id="runner-completion-text">Great job taking this time for your wellbeing. Your reflection has been completed.</p>
+                <div class="completion-actions">
+                  <button id="runner-return-btn" class="btn-primary-gradient">Return to Pathways</button>
+                  <button id="runner-chat-discuss-btn" class="btn-outline-pill">Discuss with MannMitra</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="runner-footer-controls" class="runner-footer-nav">
               <button id="runner-back-btn" class="btn-ghost-secondary small-btn" disabled>Back</button>
               <button id="runner-skip-btn" class="btn-ghost-secondary small-btn">Skip Step</button>
               <button id="runner-next-btn" class="btn-primary-gradient small-btn">Continue →</button>
@@ -864,6 +963,13 @@
             <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
           </div>
 
+          <!-- Search Bar -->
+          <div class="resources-toolbar" style="margin-bottom: 16px;">
+            <div class="resource-search-box" style="width: 100%;">
+              <input type="text" id="campus-search-input" placeholder="Search campus departments, buildings, helplines, or keywords..." aria-label="Search campus directory" />
+            </div>
+          </div>
+
           <!-- Category Filter Bar -->
           <div class="campus-category-tabs">
             <button class="campus-cat-btn active" data-cat="all">All Campus Resources</button>
@@ -876,6 +982,12 @@
 
           <!-- Verified Campus Resource Cards -->
           <div class="campus-cards-grid">
+            <div id="campus-empty-state" class="clean-empty-state hidden" style="grid-column: 1 / -1; padding: 40px 20px;">
+              <span class="empty-icon">🏛️</span>
+              <p>No campus contacts found.</p>
+              <small>No campus resources match your filter or search. Check 'All Campus Resources' or try another term.</small>
+              <button id="campus-clear-filter-btn" class="btn-outline-pill small-btn empty-action-btn">Show All Campus Resources</button>
+            </div>
             
             <!-- 1. Division of Counseling and Happiness -->
             <div class="campus-resource-card" data-cat="counseling">
@@ -917,7 +1029,7 @@
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">📞 Enquiry Phone:</span>
-                  <span class="detail-val"><strong>01824-520150</strong></span>
+                  <span class="detail-val"><a href="tel:01824520150" class="campus-link" title="Call DSR Helpline">01824-520150</a></span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">🚪 How to Access:</span>
@@ -977,15 +1089,15 @@
               <div class="campus-detail-list">
                 <div class="detail-row">
                   <span class="detail-label">🚨 Police / Ambulance / General:</span>
-                  <span class="detail-val"><strong>112</strong></span>
+                  <span class="detail-val"><a href="tel:112" class="campus-link" title="Call Emergency Services"><strong>112</strong></a></span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">🌸 Tele-MANAS (Govt of India):</span>
-                  <span class="detail-val"><strong>1800-891-4416</strong> (or 14416)</span>
+                  <span class="detail-val"><a href="tel:18008914416" class="campus-link" title="Call Tele-MANAS"><strong>1800-891-4416</strong></a> (or 14416)</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">🤝 Vandrevala Foundation:</span>
-                  <span class="detail-val"><strong>9999 666 555</strong></span>
+                  <span class="detail-val"><a href="tel:9999666555" class="campus-link" title="Call Vandrevala Foundation"><strong>9999 666 555</strong></a></span>
                 </div>
               </div>
               <div class="res-source-footer">
@@ -1021,18 +1133,20 @@
               <button class="lib-cat-btn" data-category="sleep">Sleep & Routine</button>
               <button class="lib-cat-btn" data-category="relationships">Relationships</button>
               <button class="lib-cat-btn" data-category="support">Help & Support</button>
+              <button class="lib-cat-btn" data-category="bookmarks">★ Saved Bookmarks</button>
             </div>
           </div>
 
           <!-- Resource Cards Grid -->
           <div id="lib-cards-grid" class="lib-cards-grid">
+            <button id="lib-empty-reset-btn" class="hidden" aria-hidden="true"></button>
             <!-- Rendered by JavaScript (14+ curated guides) -->
           </div>
 
           <!-- Resource Detail Modal / View -->
-          <div id="lib-detail-modal" class="lib-detail-modal hidden">
-            <div class="lib-detail-card">
-              <button id="close-lib-detail-btn" class="close-detail-btn">✕</button>
+          <div id="lib-detail-modal" class="lib-detail-modal hidden" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+            <div class="lib-detail-card" tabindex="-1">
+              <button id="close-lib-detail-btn" class="close-detail-btn" aria-label="Close guide modal">✕</button>
               <span id="detail-category-tag" class="lib-tag">Mindfulness</span>
               <h2 id="detail-title">Understanding Academic Overwhelm</h2>
               <div class="detail-meta">
@@ -1065,20 +1179,20 @@
             <!-- Summary Stats -->
             <div class="journey-stats-row">
               <div class="page-card stat-tile">
-                <span class="stat-big-number">7</span>
-                <span class="stat-tile-label">Days Active</span>
+                <span class="stat-big-number" id="journey-stat-sessions">1</span>
+                <span class="stat-tile-label">Session Active</span>
               </div>
               <div class="page-card stat-tile">
-                <span class="stat-big-number">18</span>
+                <span class="stat-big-number" id="journey-stat-minutes">0</span>
                 <span class="stat-tile-label">Mindful Minutes</span>
               </div>
               <div class="page-card stat-tile">
-                <span class="stat-big-number">4</span>
-                <span class="stat-tile-label">Milestones Reached</span>
+                <span class="stat-big-number" id="journey-stat-activities">0</span>
+                <span class="stat-tile-label">Activities Completed</span>
               </div>
               <div class="page-card stat-tile">
-                <span class="stat-big-number">Level 3</span>
-                <span class="stat-tile-label">Mindful Seeker</span>
+                <span class="stat-big-number" id="journey-stat-milestones">0 / 4</span>
+                <span class="stat-tile-label">Milestones Reached</span>
               </div>
             </div>
 
@@ -1086,25 +1200,25 @@
             <div class="page-card">
               <h3 class="card-subtitle-bold">Personal Milestones</h3>
               <div class="milestones-flex-row">
-                <div class="milestone-badge-item unlocked">
+                <div class="milestone-badge-item in-progress" id="milestone-checkin">
                   <div class="m-icon">🌱</div>
                   <strong>First Check-in</strong>
-                  <small>Took your first step</small>
+                  <small id="milestone-checkin-desc">Log your first feeling</small>
                 </div>
-                <div class="milestone-badge-item unlocked">
-                  <div class="m-icon">🧘</div>
+                <div class="milestone-badge-item in-progress" id="milestone-breathe">
+                  <div class="m-icon">🪷</div>
                   <strong>Breathe Easy</strong>
-                  <small>Completed 5 breathing pauses</small>
+                  <small id="milestone-breathe-desc">Complete 1 breathing session</small>
                 </div>
-                <div class="milestone-badge-item unlocked">
-                  <div class="m-icon">✍️</div>
-                  <strong>Inner Voice</strong>
-                  <small>Logged your first reflection</small>
+                <div class="milestone-badge-item in-progress" id="milestone-journey">
+                  <div class="m-icon">🧭</div>
+                  <strong>Guided Journey</strong>
+                  <small id="milestone-journey-desc">Complete 1 guided reflection</small>
                 </div>
-                <div class="milestone-badge-item in-progress">
+                <div class="milestone-badge-item in-progress" id="milestone-consistent">
                   <div class="m-icon">🌟</div>
-                  <strong>Calm Master</strong>
-                  <small>90 XP to unlock</small>
+                  <strong>Mindful Focus</strong>
+                  <small id="milestone-consistent-desc">Complete 3 self-care activities</small>
                 </div>
               </div>
             </div>
@@ -1112,41 +1226,10 @@
             <!-- Activity Timeline -->
             <div class="page-card">
               <h3 class="card-subtitle-bold">Activity Timeline</h3>
-              <div class="timeline-container">
-                <div class="timeline-entry">
-                  <div class="timeline-dot checkin"></div>
-                  <div class="timeline-content">
-                    <div class="entry-header">
-                      <strong>Mood Check-in: Good 😊</strong>
-                      <span class="entry-time">Today, 2:15 PM</span>
-                    </div>
-                    <p>Noted feeling lighter after finishing assignment drafts.</p>
-                  </div>
-                </div>
-
-                <div class="timeline-entry">
-                  <div class="timeline-dot breathe"></div>
-                  <div class="timeline-content">
-                    <div class="entry-header">
-                      <strong>Box Breathing Session</strong>
-                      <span class="entry-time">Yesterday, 9:30 PM</span>
-                    </div>
-                    <p>Completed 2 minutes of calming 4-4-4-4 rhythm before sleep.</p>
-                  </div>
-                </div>
-
-                <div class="timeline-entry">
-                  <div class="timeline-dot journey"></div>
-                  <div class="timeline-content">
-                    <div class="entry-header">
-                      <strong>Guided Support: Exam Pressure</strong>
-                      <span class="entry-time">2 days ago</span>
-                    </div>
-                    <p>Explored pacing strategies for academic workload.</p>
-                  </div>
-                </div>
+              <div class="timeline-container" id="journey-timeline-container">
+                <!-- Populated dynamically via JS -->
               </div>
-              <small class="demo-tag">Demonstration timeline showing prototype capabilities</small>
+              <small class="demo-tag">Session activity timeline derived from your real actions</small>
             </div>
           </div>
         </div>
@@ -1193,9 +1276,10 @@
               <div class="settings-form-row">
                 <label>Accent Color Palette:</label>
                 <div class="accent-options-row">
-                  <button class="accent-opt-btn active" data-accent="pink-purple">🌸 Lavender Sunset (Default)</button>
-                  <button class="accent-opt-btn" data-accent="ocean-calm">🌊 Ocean Breeze</button>
-                  <button class="accent-opt-btn" data-accent="forest-sage">🌿 Forest Sage</button>
+                  <button class="accent-opt-btn active" data-accent="pink-purple">🌸 Pink / Purple (Default)</button>
+                  <button class="accent-opt-btn" data-accent="lavender">🪻 Lavender</button>
+                  <button class="accent-opt-btn" data-accent="teal">🩵 Teal</button>
+                  <button class="accent-opt-btn" data-accent="warm-peach">🍑 Warm Peach</button>
                 </div>
               </div>
             </div>
@@ -1233,7 +1317,7 @@
             <div class="settings-card">
               <h3 class="settings-section-title">4. Privacy & Data Handling</h3>
               <p class="card-body-text">
-                MannMitra prototype processes your chat either through a local or configured model. Prototype records such as mood selections and reflections are stored strictly in your browser session storage.
+                MannMitra prototype processes your chat through the local or configured model endpoint. During this prototype session, mood entries, chat history, and guided reflection inputs are held in JavaScript memory and are not currently persisted to a backend database (resetting on logout or page reload). Appearance preferences and the optional remembered student identifier are stored separately in browser local storage.
               </p>
               <div class="settings-action-row">
                 <button id="clear-demo-data-btn" class="btn-ghost-secondary small-btn danger-text">Clear Local Demo Data</button>
@@ -1289,136 +1373,553 @@
           </div>
         </div>
 
+        <!-- ==================== VIEW 10: CALM MUSIC & SOUNDSCAPES ==================== -->
+        <div id="view-calm-music" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Acoustic Sanctuary & Soundscapes</span>
+              <h2 class="view-page-title">Calm Music</h2>
+              <p class="view-page-desc">Restorative ambient soundscapes, nature frequencies, and gentle lo-fi waves to melt away academic stress and cultivate deep focus.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <div class="calm-music-container">
+            <!-- Hero Visualizer & Active Player Card -->
+            <div class="page-card music-player-hero-card">
+              <div class="visualizer-stage-wrapper">
+                <canvas id="music-visualizer-canvas" class="visualizer-canvas" width="680" height="130"></canvas>
+                <div class="visualizer-overlay-controls">
+                  <div class="visualizer-mode-toggle">
+                    <button id="viz-mode-waves-btn" class="viz-mode-btn active" data-mode="waves">Ambient Waves</button>
+                    <button id="viz-mode-rings-btn" class="viz-mode-btn" data-mode="rings">Breathing Rings</button>
+                  </div>
+                  <span id="music-live-badge" class="music-live-badge paused">
+                    <span class="live-dot"></span>
+                    <span id="music-live-status-text">Ready to Unwind</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Track Details & Audio Controls Row -->
+              <div class="music-player-controls-row">
+                <div class="music-track-meta">
+                  <div id="music-current-icon" class="music-track-avatar">🌧️</div>
+                  <div class="music-track-titles">
+                    <div class="music-track-category-row">
+                      <span id="music-current-category" class="music-badge-pill">Nature Sounds</span>
+                      <span id="music-current-freq" class="music-freq-pill">432Hz Harmonic</span>
+                    </div>
+                    <h3 id="music-current-title" class="music-track-title">Gentle Rain & Soft Thunder</h3>
+                    <p id="music-current-desc" class="music-track-desc">Soothing precipitation with distant peaceful rumble to quiet racing thoughts.</p>
+                  </div>
+                </div>
+
+                <div class="music-playback-actions">
+                  <button id="music-prev-btn" class="music-circle-btn secondary" title="Previous soundscape">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                      <line x1="5" y1="19" x2="5" y2="5"></line>
+                    </svg>
+                  </button>
+                  <button id="music-play-btn" class="music-play-main-btn" title="Play soundscape">
+                    <span id="music-play-icon" class="play-icon">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                      </svg>
+                    </span>
+                    <span id="music-play-label">Play Sound</span>
+                  </button>
+                  <button id="music-next-btn" class="music-circle-btn secondary" title="Next soundscape">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                      <line x1="19" y1="5" x2="19" y2="19"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Volume & Sleep Timer Toolbar -->
+              <div class="music-secondary-toolbar">
+                <div class="music-volume-control">
+                  <span class="music-volume-icon">🔊</span>
+                  <input type="range" id="music-volume-slider" min="0" max="100" value="70" class="music-range-slider" />
+                  <span id="music-volume-text" class="music-volume-text">70%</span>
+                </div>
+
+                <div class="music-timer-controls">
+                  <span class="timer-label">Calm Timer:</span>
+                  <button class="music-timer-btn active" data-mins="0">Continuous</button>
+                  <button class="music-timer-btn" data-mins="5">5 Min</button>
+                  <button class="music-timer-btn" data-mins="15">15 Min</button>
+                  <button class="music-timer-btn" data-mins="30">30 Min</button>
+                  <span id="music-timer-display" class="music-timer-countdown hidden">--:--</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Soundscape Selection Grid -->
+            <div class="music-section-header">
+              <h3 class="section-subtitle-heading">Curated Soundscape Library</h3>
+              <span class="section-subtitle-hint">Click any track to switch soundscape</span>
+            </div>
+            <div class="calm-music-grid">
+              <!-- Track 1: Rain -->
+              <div class="music-track-card active" data-track-id="rain">
+                <div class="track-card-header">
+                  <span class="track-emoji">🌧️</span>
+                  <div class="track-card-tags">
+                    <span class="track-pill">Nature</span>
+                    <span class="track-pill freq">432Hz</span>
+                  </div>
+                </div>
+                <h4 class="track-card-title">Gentle Rain & Thunder</h4>
+                <p class="track-card-desc">Binaural raindrops and soft distant thunder for deep focus & masking noise.</p>
+                <div class="track-card-footer">
+                  <span class="track-mood-badge">🌧️ Calm Focus</span>
+                  <button class="btn-track-play" data-track="rain">Play Track</button>
+                </div>
+              </div>
+
+              <!-- Track 2: Ocean -->
+              <div class="music-track-card" data-track-id="ocean">
+                <div class="track-card-header">
+                  <span class="track-emoji">🌊</span>
+                  <div class="track-card-tags">
+                    <span class="track-pill">Coastal</span>
+                    <span class="track-pill freq">6 Breaths/min</span>
+                  </div>
+                </div>
+                <h4 class="track-card-title">Ocean Sunset Waves</h4>
+                <p class="track-card-desc">Rhythmic gentle surf swells that naturally slow your breathing rate.</p>
+                <div class="track-card-footer">
+                  <span class="track-mood-badge">🌊 Anxiety Ease</span>
+                  <button class="btn-track-play" data-track="ocean">Play Track</button>
+                </div>
+              </div>
+
+              <!-- Track 3: Lo-Fi -->
+              <div class="music-track-card" data-track-id="lofi">
+                <div class="track-card-header">
+                  <span class="track-emoji">☕</span>
+                  <div class="track-card-tags">
+                    <span class="track-pill">Lo-Fi</span>
+                    <span class="track-pill freq">Warm Keys</span>
+                  </div>
+                </div>
+                <h4 class="track-card-title">Lo-Fi Study Beats</h4>
+                <p class="track-card-desc">Warm electric piano chords, mellow bass, and subtle tape warmth for late night study.</p>
+                <div class="track-card-footer">
+                  <span class="track-mood-badge">☕ Deep Study</span>
+                  <button class="btn-track-play" data-track="lofi">Play Track</button>
+                </div>
+              </div>
+
+              <!-- Track 4: Meditation Drone -->
+              <div class="music-track-card" data-track-id="meditation">
+                <div class="track-card-header">
+                  <span class="track-emoji">🧘</span>
+                  <div class="track-card-tags">
+                    <span class="track-pill">Ambient</span>
+                    <span class="track-pill freq">528Hz Solfeggio</span>
+                  </div>
+                </div>
+                <h4 class="track-card-title">Deep Meditation Drone</h4>
+                <p class="track-card-desc">Harmonic singing bowls and tranquil drone frequencies for emotional grounding.</p>
+                <div class="track-card-footer">
+                  <span class="track-mood-badge">🧘 Centering</span>
+                  <button class="btn-track-play" data-track="meditation">Play Track</button>
+                </div>
+              </div>
+
+              <!-- Track 5: Forest -->
+              <div class="music-track-card" data-track-id="forest">
+                <div class="track-card-header">
+                  <span class="track-emoji">🌲</span>
+                  <div class="track-card-tags">
+                    <span class="track-pill">Forest</span>
+                    <span class="track-pill freq">Wind & Birds</span>
+                  </div>
+                </div>
+                <h4 class="track-card-title">Whispering Forest & Birds</h4>
+                <p class="track-card-desc">Gentle breeze through pine needles with sweet birdsong for fresh mental energy.</p>
+                <div class="track-card-footer">
+                  <span class="track-mood-badge">🌲 Refresh Mind</span>
+                  <button class="btn-track-play" data-track="forest">Play Track</button>
+                </div>
+              </div>
+
+              <!-- Track 6: Starlight -->
+              <div class="music-track-card" data-track-id="starlight">
+                <div class="track-card-header">
+                  <span class="track-emoji">🌌</span>
+                  <div class="track-card-tags">
+                    <span class="track-pill">Cosmic</span>
+                    <span class="track-pill freq">Delta Waves</span>
+                  </div>
+                </div>
+                <h4 class="track-card-title">Celestial Starlight</h4>
+                <p class="track-card-desc">Ethereal floating chord pads for evening relaxation, decompression, and sleep.</p>
+                <div class="track-card-footer">
+                  <span class="track-mood-badge">🌌 Deep Rest</span>
+                  <button class="btn-track-play" data-track="starlight">Play Track</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 11: MINDFUL GAMES ==================== -->
+        <div id="view-mindful-games" class="main-view hidden page-view-container">
+          <div class="view-header-card">
+            <div>
+              <span class="view-eyebrow">Playful Relief & Joy</span>
+              <h2 class="view-page-title">Mindful Games</h2>
+              <p class="view-page-desc">Low-pressure, delightful micro-games created to interrupt cognitive anxiety loops, release tension, and restore a sense of calm accomplishment.</p>
+            </div>
+            <button class="btn-outline-pill back-to-chat-btn">← Back to Chat</button>
+          </div>
+
+          <div class="mindful-games-container">
+            <!-- Game Navigation Tabs -->
+            <div class="mindful-games-nav">
+              <button id="game-tab-bubble" class="game-nav-tab active" data-game="bubble">
+                <span class="game-nav-icon">🫧</span>
+                <div class="game-nav-meta">
+                  <span class="game-nav-title">Zen Bubble Pop</span>
+                  <span class="game-nav-sub">Tactile Stress Release</span>
+                </div>
+              </button>
+              <button id="game-tab-pattern" class="game-nav-tab" data-game="pattern">
+                <span class="game-nav-icon">🎨</span>
+                <div class="game-nav-meta">
+                  <span class="game-nav-title">Color & Pattern Flow</span>
+                  <span class="game-nav-sub">Harmonic Ripples & Mandala</span>
+                </div>
+              </button>
+              <button id="game-tab-memory" class="game-nav-tab" data-game="memory">
+                <span class="game-nav-icon">🌸</span>
+                <div class="game-nav-meta">
+                  <span class="game-nav-title">Mindful Memory Garden</span>
+                  <span class="game-nav-sub">Botanical Tile Match</span>
+                </div>
+              </button>
+            </div>
+
+            <!-- GAME 1: Zen Bubble Pop -->
+            <div id="game-panel-bubble" class="page-card game-panel">
+              <div class="game-hud-bar">
+                <div class="hud-stat-pill">
+                  <span>Bubbles Popped:</span>
+                  <strong id="bubble-count-num">0</strong>
+                </div>
+                <div class="hud-stat-pill encouragement">
+                  <span id="bubble-affirmation-msg">Tap any bubble to release tension ✨</span>
+                </div>
+                <button id="bubble-refill-btn" class="btn-outline-pill small-btn">Refill Bubbles 🫧</button>
+              </div>
+
+              <div id="bubble-arena" class="bubble-arena">
+                <!-- Floating bubbles rendered dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- GAME 2: Color & Pattern Flow -->
+            <div id="game-panel-pattern" class="page-card game-panel hidden">
+              <div class="game-hud-bar">
+                <div class="pattern-palette-selector">
+                  <span class="hud-label">Palette:</span>
+                  <button class="palette-chip active" data-palette="sunset">Sunset 🌇</button>
+                  <button class="palette-chip" data-palette="ocean">Ocean 🌊</button>
+                  <button class="palette-chip" data-palette="cherry">Blossom 🌸</button>
+                  <button class="palette-chip" data-palette="aurora">Aurora 🌌</button>
+                </div>
+                <div class="hud-actions-right">
+                  <button id="pattern-chimes-toggle-btn" class="btn-outline-pill small-btn" title="Toggle audio chimes">
+                    <span id="pattern-chimes-label">🔔 Chimes: On</span>
+                  </button>
+                  <button id="pattern-clear-btn" class="btn-ghost-secondary small-btn">Clear Canvas</button>
+                </div>
+              </div>
+
+              <div class="pattern-canvas-wrapper">
+                <canvas id="pattern-flow-canvas" class="pattern-flow-canvas" width="680" height="340"></canvas>
+                <div class="pattern-hint-overlay">
+                  <span>Tap, click, or drag to bloom watercolor ripples and harmonizing bells ✨</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- GAME 3: Mindful Memory Garden -->
+            <div id="game-panel-memory" class="page-card game-panel hidden">
+              <div class="game-hud-bar">
+                <div class="hud-stat-pill">
+                  <span>Matches:</span>
+                  <span class="stat-highlight"><strong id="memory-matched-pairs">0</strong> / 6</span>
+                </div>
+                <div class="hud-stat-pill">
+                  <span>Gentle Moves:</span>
+                  <strong id="memory-moves-num">0</strong>
+                </div>
+                <button id="memory-restart-btn" class="btn-outline-pill small-btn">New Garden 🌸</button>
+              </div>
+
+              <div id="memory-garden-grid" class="memory-garden-grid">
+                <!-- 12 Cards dynamically injected via JS -->
+              </div>
+
+              <!-- Memory Success Modal / Banner -->
+              <div id="memory-garden-success" class="memory-success-banner hidden">
+                <div class="success-icon-bounce">🌸✨</div>
+                <h3>Your Mind is Calm & Clear!</h3>
+                <p>You matched all 6 wellbeing pairs with patience and gentle presence.</p>
+                <button id="memory-play-again-btn" class="btn-primary-gradient small-btn">Plant Another Garden</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
 
-    <!-- RIGHT WELLBEING CONTEXTUAL PANEL (~320px) -->
+    <!-- RIGHT WELLBEING CONTEXTUAL PANEL (~340px) -->
     <aside id="dashboard-right-panel" class="dashboard-right-panel">
-      
-      <!-- User Greeting & Profile Snapshot -->
-      <div class="panel-card greeting-panel-card">
-        <div class="panel-card-header">
-          <div class="panel-title-group">
-            <span class="panel-eyebrow">Personal Sanctuary</span>
-            <h3 id="panel-greeting-user" class="panel-heading">Namaste, Vyankatesh 🙏</h3>
-          </div>
-          <div class="panel-date-badge" id="current-date-badge">Today</div>
-        </div>
-        <p class="panel-subtext">You've checked in 3 times this week. Honor where you are right now.</p>
-      </div>
+      <!-- Hidden compatibility hooks -->
+      <span id="panel-greeting-user" class="hidden"></span>
+      <span id="current-date-badge" class="hidden"></span>
 
-      <!-- Mood Check-in Section -->
+      <!-- Card 1: How are you feeling today? -->
       <div class="panel-card mood-checkin-card">
         <div class="card-title-row">
-          <span class="card-title-text">Quick Mood Check-in</span>
-          <span class="pulse-indicator"></span>
+          <span class="card-title-text">How are you feeling today?</span>
+          <button class="card-audio-btn" title="Speak prompt">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          </button>
         </div>
         <div class="mood-grid">
           <button class="mood-btn" data-mood="Terrible" title="Terrible">
-            <span class="mood-emoji">😭</span>
+            <div class="mood-circle-badge terrible">
+              <svg viewBox="0 0 36 36" class="mood-face-svg" aria-hidden="true">
+                <circle cx="18" cy="18" r="17" fill="#F87171"/>
+                <path d="M10.5 13.5 L15 15.5 M25.5 13.5 L21 15.5" stroke="#3B0D0C" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="13" cy="16.5" r="1.5" fill="#3B0D0C"/>
+                <circle cx="23" cy="16.5" r="1.5" fill="#3B0D0C"/>
+                <path d="M12.5 24.5 C14.5 21 21.5 21 23.5 24.5" stroke="#3B0D0C" stroke-width="2" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
             <span class="mood-label">Terrible</span>
           </button>
           <button class="mood-btn" data-mood="Sad" title="Sad / Low">
-            <span class="mood-emoji">😔</span>
+            <div class="mood-circle-badge sad">
+              <svg viewBox="0 0 36 36" class="mood-face-svg" aria-hidden="true">
+                <circle cx="18" cy="18" r="17" fill="#FDBA74"/>
+                <circle cx="12.5" cy="15.5" r="1.6" fill="#431407"/>
+                <circle cx="23.5" cy="15.5" r="1.6" fill="#431407"/>
+                <path d="M13 24 C15 21.5 21 21.5 23 24" stroke="#431407" stroke-width="2" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
             <span class="mood-label">Sad</span>
           </button>
           <button class="mood-btn" data-mood="Okay" title="Okay / Neutral">
-            <span class="mood-emoji">😐</span>
+            <div class="mood-circle-badge okay">
+              <svg viewBox="0 0 36 36" class="mood-face-svg" aria-hidden="true">
+                <circle cx="18" cy="18" r="17" fill="#FDE047"/>
+                <circle cx="12.5" cy="15.5" r="1.6" fill="#422006"/>
+                <circle cx="23.5" cy="15.5" r="1.6" fill="#422006"/>
+                <line x1="13" y1="22.5" x2="23" y2="22.5" stroke="#422006" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
             <span class="mood-label">Okay</span>
           </button>
           <button class="mood-btn" data-mood="Good" title="Good">
-            <span class="mood-emoji">😊</span>
+            <div class="mood-circle-badge good">
+              <svg viewBox="0 0 36 36" class="mood-face-svg" aria-hidden="true">
+                <circle cx="18" cy="18" r="17" fill="#86EFAC"/>
+                <circle cx="12.5" cy="15" r="1.6" fill="#064E3B"/>
+                <circle cx="23.5" cy="15" r="1.6" fill="#064E3B"/>
+                <path d="M12.5 21 C14.5 24 21.5 24 23.5 21" stroke="#064E3B" stroke-width="2" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
             <span class="mood-label">Good</span>
           </button>
           <button class="mood-btn" data-mood="Great" title="Great">
-            <span class="mood-emoji">🌟</span>
+            <div class="mood-circle-badge great">
+              <svg viewBox="0 0 36 36" class="mood-face-svg" aria-hidden="true">
+                <circle cx="18" cy="18" r="17" fill="#4ADE80"/>
+                <circle cx="12.5" cy="14.5" r="1.6" fill="#064E3B"/>
+                <circle cx="23.5" cy="14.5" r="1.6" fill="#064E3B"/>
+                <path d="M11.5 20.5 C13.5 25.5 22.5 25.5 24.5 20.5 Z" fill="#064E3B"/>
+              </svg>
+            </div>
             <span class="mood-label">Great</span>
           </button>
         </div>
         <div id="mood-response-banner" class="mood-response-banner hidden"></div>
       </div>
 
-      <!-- Quick Calming Tools List -->
+      <!-- Card 2: Your Wellbeing Journey -->
+      <div class="panel-card journey-snapshot-card">
+        <div class="card-title-row">
+          <span class="card-title-text">Your Wellbeing Journey</span>
+          <span class="journey-level-pill" id="right-panel-journey-level">Level 1</span>
+        </div>
+        <div class="journey-xp-bar-wrapper">
+          <div class="journey-xp-bar-track">
+            <div class="journey-xp-bar-fill" id="right-panel-xp-fill" style="width: 0%;"></div>
+          </div>
+          <span class="journey-xp-text" id="right-panel-xp-text">0 / 100 XP</span>
+        </div>
+        <div class="journey-badges-flex" id="right-panel-badges-flex">
+          <div class="journey-badge-item in-progress" id="rp-badge-checkin">
+            <div class="badge-icon-circle streak">🌱</div>
+            <span class="badge-sub-label">Check-in</span>
+          </div>
+          <div class="journey-badge-item in-progress" id="rp-badge-breathe">
+            <div class="badge-icon-circle breathe">🪷</div>
+            <span class="badge-sub-label">Breathe</span>
+          </div>
+          <div class="journey-badge-item in-progress" id="rp-badge-reflect">
+            <div class="badge-icon-circle heart">💖</div>
+            <span class="badge-sub-label">Reflect</span>
+          </div>
+          <div class="journey-badge-item in-progress" id="rp-badge-focus">
+            <div class="badge-icon-circle journal">⭐</div>
+            <span class="badge-sub-label">Focus</span>
+          </div>
+          <div class="journey-badge-item" onclick="navigateTo('my-journey')" style="cursor: pointer;" title="View all journey details">
+            <div class="badge-icon-circle more">•••</div>
+            <span class="badge-sub-label">Details →</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Quick Tools -->
       <div class="panel-card quick-tools-card">
         <div class="card-title-row">
-          <span class="card-title-text">Quick Calming Tools</span>
+          <span class="card-title-text">Quick Tools</span>
+          <a href="#" class="quick-tools-view-link" onclick="event.preventDefault(); navigateTo('relax-breathe');">View All →</a>
         </div>
-        <div class="tools-list">
-          <button id="action-breathing-btn" class="tool-list-item">
-            <div class="tool-icon-box">🧘</div>
-            <div class="tool-text">
-              <span class="tool-name">Guided Breathing</span>
-              <span class="tool-desc">Box breathing (4-4-4-4)</span>
-            </div>
-            <svg class="tool-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
+        <div class="quick-tools-grid-2x2">
+          <button id="action-breathing-btn" class="quick-tool-tile pink">
+            <span class="quick-tool-emoji">🪷</span>
+            <span class="quick-tool-title">Guided Breathing</span>
           </button>
-
-          <button id="tool-calm-music-btn" class="tool-list-item">
-            <div class="tool-icon-box">🎶</div>
-            <div class="tool-text">
-              <span class="tool-name">Calm Ambient Sounds</span>
-              <span class="tool-desc">Gentle focus chimes</span>
-            </div>
-            <svg class="tool-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
+          <button id="tool-calm-music-btn" class="quick-tool-tile purple">
+            <span class="quick-tool-emoji">🎵</span>
+            <span class="quick-tool-title">Calm Music</span>
           </button>
-
-          <button id="tool-affirmations-btn" class="tool-list-item">
-            <div class="tool-icon-box">✨</div>
-            <div class="tool-text">
-              <span class="tool-name">Positive Affirmation</span>
-              <span class="tool-desc">Daily confidence reminder</span>
-            </div>
-            <svg class="tool-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
+          <button id="tool-affirmations-btn" class="quick-tool-tile yellow">
+            <span class="quick-tool-emoji">☀️</span>
+            <span class="quick-tool-title">Positive Affirmations</span>
+          </button>
+          <button id="tool-mindful-games-btn" class="quick-tool-tile blue">
+            <span class="quick-tool-emoji">🎮</span>
+            <span class="quick-tool-title">Mindful Games</span>
           </button>
         </div>
       </div>
 
-      <!-- Today's Thought Card -->
-      <div class="panel-card thought-card">
-        <div class="thought-header">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+      <!-- Card 4: Today's Thought -->
+      <div id="todays-thought-card" class="panel-card thought-card">
+        <div class="card-title-row">
+          <span class="card-title-text">Today's Thought</span>
+          <div class="thought-actions-group">
+            <button id="thought-speak-btn" class="thought-action-icon-btn" title="Listen to thought aloud">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+            </button>
+            <button id="thought-refresh-btn" class="thought-refresh-icon-btn" title="Refresh thought">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="thought-banner-art">
+          <svg class="thought-scenery-svg" viewBox="0 0 320 110" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="thoughtSky" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FEF3C7"/>
+                <stop offset="50%" stop-color="#FCE7F3"/>
+                <stop offset="100%" stop-color="#E9D5FF"/>
+              </linearGradient>
+            </defs>
+            <rect width="320" height="110" fill="url(#thoughtSky)"/>
+            <circle cx="242" cy="46" r="24" fill="#FDE047" opacity="0.6"/>
+            <path d="M0,84 Q60,52 135,78 T260,64 T320,82 L320,110 L0,110 Z" fill="#C4B5FD" opacity="0.48"/>
+            <path d="M0,94 Q95,68 185,92 T320,76 L320,110 L0,110 Z" fill="#A855F7" opacity="0.30"/>
+            <!-- Corner leaves silhouette -->
+            <path d="M-4,110 C2,76 22,56 42,68 C32,82 28,96 34,110 Z" fill="#10B981" opacity="0.45"/>
+            <path d="M18,110 C28,82 52,74 64,92 C48,96 42,102 46,110 Z" fill="#059669" opacity="0.38"/>
+            <path d="M324,110 C318,74 294,54 274,68 C286,82 292,96 284,110 Z" fill="#10B981" opacity="0.45"/>
+            <path d="M298,110 C288,82 264,74 252,92 C268,96 274,102 270,110 Z" fill="#059669" opacity="0.38"/>
           </svg>
-          <span>Today's Thought</span>
-        </div>
-        <p class="thought-quote">
-          "You don't have to control your thoughts. You just have to stop letting them control you."
-        </p>
-        <span class="thought-author">— Loving Reminder</span>
-      </div>
-
-      <!-- Immediate Emergency Support Card -->
-      <div class="panel-card emergency-card">
-        <div class="emergency-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
-          <span>Need Immediate Help?</span>
-        </div>
-        <p class="emergency-desc">If you are in distress or crisis, please connect with professional care right away:</p>
-        <div class="emergency-contacts">
-          <div class="emergency-row">
-            <span>Tele-MANAS:</span>
-            <strong>1800-891-4416</strong>
-          </div>
-          <div class="emergency-row">
-            <span>Emergency Police/Ambulance:</span>
-            <strong>112</strong>
-          </div>
-          <div class="emergency-row">
-            <span>LPU Counseling Dept:</span>
-            <strong>Building 8, Room 208</strong>
+          <div class="thought-content-wrapper">
+            <span id="thought-theme-badge" class="thought-theme-badge">⚡ Daily Fuel</span>
+            <p id="thought-quote-text" class="thought-quote-styled">
+              "Progress, not perfection,<br>is what truly matters."
+            </p>
+            <span id="thought-author-text" class="thought-author-styled">~ Student Resilience</span>
           </div>
         </div>
       </div>
 
+      <!-- Card 5: Need Immediate Help? -->
+      <div class="panel-card emergency-help-card">
+        <div class="emergency-help-title-row">
+          <div class="emergency-shield-icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <span class="emergency-help-heading">Need Immediate Help?</span>
+        </div>
+        <div class="emergency-help-body-flex">
+          <p class="emergency-help-subtext">If you're in a crisis or having severe distress, please reach out immediately.</p>
+          <div class="emergency-caring-hands-wrap">
+            <svg viewBox="0 0 80 60" class="caring-hands-svg" fill="none">
+              <!-- Soft glowing heart -->
+              <filter id="heartGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+              <path d="M40 18 C35 10 26 10 21 17 C16 25 28 34 40 42 C52 34 64 25 59 17 C54 10 45 10 40 18 Z" fill="#FF5E8A" filter="url(#heartGlow)"/>
+              <!-- Gentle cupping hands -->
+              <path d="M12 42 C18 36 28 35 36 41 C38 42.5 35 46 31 47 L20 49 C14 50 11 47 12 42 Z" fill="#FDE2E4" stroke="#F472B6" stroke-width="1.2"/>
+              <path d="M68 42 C62 36 52 35 44 41 C42 42.5 45 46 49 47 L60 49 C66 50 69 47 68 42 Z" fill="#FDE2E4" stroke="#F472B6" stroke-width="1.2"/>
+              <path d="M20 49 C26 47 34 47 40 53 C36 56 29 57 20 54" stroke="#F472B6" stroke-width="1.2" stroke-linecap="round"/>
+              <path d="M60 49 C54 47 46 47 40 53 C44 56 51 57 60 54" stroke="#F472B6" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <button id="right-panel-emergency-btn" class="emergency-resource-pill-btn" onclick="navigateTo('guided-support')">
+          <span>💗 View Support Resources →</span>
+        </button>
+      </div>
     </aside>
+
+    </div> <!-- /.dashboard-workspace -->
+    </div> <!-- /.dashboard-content-column -->
+    </div> <!-- /.dashboard-body-grid -->
+
+    <!-- BOTTOM FLOATING FOOTER BAR -->
+    <footer class="desktop-floating-footer">
+      <div class="footer-privacy-box">
+        <svg class="footer-privacy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <span>Your privacy matters. Your conversations are safe and confidential. 💜</span>
+      </div>
+      <div class="footer-tagline-box">
+        <span class="footer-brand-name">MannMitra</span>
+        <span class="footer-bullet">|</span>
+        <span class="footer-motto">For a Happier, Healthier, Stronger You 🌟</span>
+      </div>
+    </footer>
 
   </div>
 
@@ -1529,6 +2030,26 @@
   <button id="nav-resources-btn-resources" class="hidden"></button>
   <button id="resources-back-to-chat-btn" class="hidden"></button>
 
+  <!-- LOGOUT CONFIRMATION MODAL -->
+  <div id="logout-confirm-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-icon-badge warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h3 class="modal-title">Sign Out of Sanctuary?</h3>
+      <p class="modal-desc">Your current session reflections and conversation will be closed. Are you sure you want to sign out?</p>
+      <div class="modal-actions-row">
+        <button type="button" id="logout-cancel-btn" class="btn-ghost-secondary">Cancel</button>
+        <button type="button" id="logout-confirm-btn" class="btn-primary-gradient danger-btn">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data/thoughts.js"></script>
   <script src="app.js"></script>
 </body>
 
