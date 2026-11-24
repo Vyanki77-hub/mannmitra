@@ -4,3 +4,8 @@ python-dotenv
 pydantic
 groq
 chromadb
+sqlalchemy
+argon2-cffi
+email-validator
+pytest
+httpx

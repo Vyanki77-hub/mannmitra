@@ -39,9 +39,15 @@ from personality import (
 load_dotenv()
 
 raw_provider = os.getenv("LLM_PROVIDER")
-selected_provider = (raw_provider.strip().lower() if raw_provider and raw_provider.strip() else "groq")
+selected_provider = (raw_provider.strip().lower() if raw_provider and raw_provider.strip() else "ollama")
 
 if selected_provider == "groq":
+    allow_cloud = os.getenv("ALLOW_CLOUD_LLM", "false").strip().lower() in ("true", "1", "yes")
+    if not allow_cloud:
+        raise RuntimeError(
+            "Cloud LLM providers (Groq) are disabled for student-privacy reasons. "
+            "To enable Groq, explicitly set ALLOW_CLOUD_LLM=true in your environment."
+        )
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     if not GROQ_API_KEY or not GROQ_API_KEY.strip():
         raise RuntimeError(
@@ -56,22 +62,39 @@ else:
 
 
 # --------------------------------------------------
-# FastAPI application
+# FastAPI application & Database Startup
 # --------------------------------------------------
 
+from db import init_db
+from auth import router as auth_router
+
 app = FastAPI(title="MannMitra Backend")
+
+
+@app.on_event("startup")
+def on_startup():
+    init_db()
 
 
 # --------------------------------------------------
 # CORS
 # --------------------------------------------------
 
+raw_origins = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://127.0.0.1:5500, http://localhost:5500, http://127.0.0.1:8000",
+)
+allowed_origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth_router)
 
 
 # --------------------------------------------------
